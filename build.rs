@@ -3,7 +3,7 @@ use std::process::Command;
 fn main() {
     // Tell Cargo that if the given file changes, to rerun this build script.
     println!("cargo:rerun-if-changed=js");
-    Command::new("yarn build")
+    Command::new("yarn install && yarn build")
         .output()
-        .expect("Can't run yarn build");
+        .expect("Can't run yarn install && yarn build");
 }
