@@ -8,7 +8,7 @@ use quicksilver::{
     run, Input, Result, Settings, Timer, Window,
 };
 use silver_animation::LinearConfig;
-use silver_editor::{did_click_button, log, EditorContext};
+use silver_editor::EditorContext;
 fn main() {
     run(
         Settings {
@@ -48,10 +48,11 @@ async fn app(window: Window, mut gfx: Graphics, mut inputs: Input) -> Result<()>
     gfx.clear(Color::WHITE);
     gfx.present(&window)?;
     let mut context = Context::new();
-    let edit_context = EditorContext::new(&mut context);
+    let mut edit_context = EditorContext::new(&mut context);
     loop {
         while inputs.next_event().await.is_some() {}
-        gfx.clear(Color::WHITE);
+        edit_context.update();
+        edit_context.draw(&mut gfx);
         animation.draw(&mut gfx, location)?;
         gfx.present(&window)?;
     }
