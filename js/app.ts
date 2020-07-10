@@ -1,8 +1,12 @@
+export { render_editor } from "./editor"
+
 type EditorSpace = {
 	internal: {
 		window?: Window | null
 	}
 }
+
+type WindowWithEditor = Window & { silver_editor: EditorSpace }
 
 type Event = {
 	event_type: "color"
@@ -41,7 +45,6 @@ export const get_events = () => {
 }
 
 export const setup_extra_window_button = (contents: string) => {
-
 	const button = document.createElement("button")
 	button.append("Create editor")
 	button.addEventListener("click", () => {
@@ -49,9 +52,14 @@ export const setup_extra_window_button = (contents: string) => {
 		if (editor.internal.window) {
 			return;
 		}
-		const window2 = window.open("", "editor")
+		//a quick hack to get arround the "no implicit any problem".
+		//normally, a window has no "silver_editor" field, but we need to hack one in to share memory with the second window
+		const window2 = window.open("", "editor") as unknown as WindowWithEditor
 		if (window2) {
-			window2["silver_editor"] = editor
+			if (!("silver_editor" in window2)) {
+				window2["silver_editor"] = editor
+			}
+
 			window2.document.write(contents)
 
 		}

@@ -9,7 +9,7 @@ enum EventTypes {
 impl TryFrom<String> for EventTypes {
     type Error = String;
     fn try_from(value: String) -> Result<Self, Self::Error> {
-        match value.as_str() {
+        match value.to_lowercase().as_str() {
             "color" => Ok(EventTypes::Color),
             x => {
                 console!(error, "dit not get a useable event. Got : ", x);
