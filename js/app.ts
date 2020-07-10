@@ -5,6 +5,9 @@ export { render_editor } from "./editor"
 type EditorSpace = {
 	internal: {
 		window?: Window | null
+		events: Event[]
+		has_shared_memory?: boolean
+
 	}
 }
 
@@ -26,7 +29,7 @@ declare let silver_editor: {
 	}
 }
 
-const get_silver_editor = () => {
+const get_silver_editor = (): EditorSpace => {
 	if (silver_editor && !silver_editor.internal) {
 
 		silver_editor.internal = {
@@ -51,13 +54,11 @@ export const get_events = () => {
 }
 
 export const setup_extra_window_button = (contents: string) => {
+	const editor = get_silver_editor()
+	editor.internal.has_shared_memory = true;
 	const button = document.createElement("button")
 	button.append("Create editor")
 	button.addEventListener("click", () => {
-		const editor = get_silver_editor()
-		if (editor.internal.window) {
-			return;
-		}
 		//a quick hack to get arround the "no implicit any problem".
 		//normally, a window has no "silver_editor" field, but we need to hack one in to share memory with the second window
 		const window2 = window.open("", "editor") as unknown as WindowWithEditor
@@ -69,9 +70,6 @@ export const setup_extra_window_button = (contents: string) => {
 			//window2.document.write(basic_layout);
 			window2.document.body.insertAdjacentHTML("afterbegin", contents);
 			render_editor(window2)
-
-
-
 		}
 	})
 	document.getElementsByTagName("body")[0].append(button)
@@ -81,7 +79,12 @@ export const hello_from_second_page = () => console.log("nice?")
 
 export const add_event_to_queue = (e: Event) => {
 	const editor = get_silver_editor()
-	editor.internal.events.push(e)
+	if (editor.internal.has_shared_memory) {
+		editor.internal.events.push(e)
+	} else {
+		fetch("event", { body: JSON.stringify(e), method: "POST" })
+	}
+
 }
 
 export const process_color_event = (e: string) => {
