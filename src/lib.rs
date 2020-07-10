@@ -69,9 +69,9 @@ pub struct EditorContext {
 impl EditorContext {
     pub fn new(context: &mut Context) -> Self {
         let layer = context.add_layer();
-        let page = include_str!("../static/editor_index.html");
+        let content = include_str!("../static/editor_index.html");
         js! {
-            window.silver_editor.setup_extra_window_button(@{page});
+            window.silver_editor.setup_extra_window_button(@{content});
         }
         Self {
             layer,

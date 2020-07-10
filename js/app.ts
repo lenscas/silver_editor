@@ -1,3 +1,5 @@
+import { render_editor } from "./editor"
+
 export { render_editor } from "./editor"
 
 type EditorSpace = {
@@ -11,6 +13,10 @@ type WindowWithEditor = Window & { silver_editor: EditorSpace }
 type Event = {
 	event_type: "color"
 	params: String
+}
+
+declare global {
+	interface Window { silver_editor: any }
 }
 
 declare let silver_editor: {
@@ -59,8 +65,12 @@ export const setup_extra_window_button = (contents: string) => {
 			if (!("silver_editor" in window2)) {
 				window2["silver_editor"] = editor
 			}
+			console.log(contents)
+			//window2.document.write(basic_layout);
+			window2.document.body.insertAdjacentHTML("afterbegin", contents);
+			render_editor(window2)
 
-			window2.document.write(contents)
+
 
 		}
 	})

@@ -1,19 +1,4 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <script>
-      window.silver_editor.hello_from_second_page();
-    </script>
-  </head>
-
-  <body id="react_handle">
-    <h1>Hello world!</h1>
-    <input
-      type="color"
-      onchange="silver_editor.process_color_event(this.value)"
-    />
-    <script>
-      window.silver_editor.render_editor(window);
-    </script>
-  </body>
-</html>
+<div id="react_handle">
+	<h1>Hello world!</h1>
+	<input type="color" onchange="silver_editor.process_color_event(this.value)" />
+</div>
