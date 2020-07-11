@@ -1,4 +1,4 @@
-use super::shared_event_logic::json_value_to_event;
+use super::shared_event_logic::json_value_iter_to_event_iter;
 use crate::{Event, EventTypes, IntoEvent};
 use stdweb::{js, unstable::TryInto, Value};
 
