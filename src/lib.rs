@@ -2,7 +2,7 @@ use mergui::{Context, LayerId};
 use quicksilver::{graphics::Color, Graphics};
 
 mod events;
-use events::events::EventStream;
+use events::EventStream;
 use std::convert::TryFrom;
 
 pub(crate) trait IntoEvent<T> {
