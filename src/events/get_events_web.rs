@@ -1,18 +1,5 @@
-use super::shared_event_logic::json_value_iter_to_event_iter;
-use crate::{Event, EventTypes, IntoEvent};
-use stdweb::{js, unstable::TryInto, Value};
-
-impl IntoEvent<Value> for EventTypes {
-    fn into_event(self, params: Value) -> Event {
-        match self {
-            EventTypes::Color => Event::Color(
-                params
-                    .try_into()
-                    .expect("color event did not have the correct parameters"),
-            ),
-        }
-    }
-}
+use super::{shared_event_logic::json_value_iter_to_event_iter, Event};
+use stdweb::js;
 
 fn get_events() -> impl Iterator<Item = Event> {
     let x = js! {

@@ -1,5 +1,4 @@
-use super::shared_event_logic::json_value_iter_to_event_iter;
-use crate::Event;
+use super::shared_event_logic::{json_value_iter_to_event_iter, Event};
 use bytes::Buf;
 use serde_json::value::Value;
 use std::{

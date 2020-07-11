@@ -1,6 +1,28 @@
-use crate::{Event, EventTypes, IntoEvent};
 use serde_json::Value;
-use std::convert::TryInto;
+use std::convert::{TryFrom, TryInto};
+
+pub(crate) trait IntoEvent<T> {
+    fn into_event(self, params: T) -> Event;
+}
+pub(crate) enum EventTypes {
+    Color,
+}
+impl TryFrom<String> for EventTypes {
+    type Error = String;
+    fn try_from(value: String) -> Result<Self, Self::Error> {
+        match value.to_lowercase().as_str() {
+            "color" => Ok(EventTypes::Color),
+            x => {
+                println!("did not get a useable event. Got : {:?}", x);
+                Err(x.to_string())
+            }
+        }
+    }
+}
+
+pub(crate) enum Event {
+    Color(String),
+}
 
 impl IntoEvent<Value> for EventTypes {
     fn into_event(self, params: Value) -> Event {

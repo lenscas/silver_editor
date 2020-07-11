@@ -2,31 +2,7 @@ use mergui::{Context, LayerId};
 use quicksilver::{graphics::Color, Graphics};
 
 mod events;
-use events::EventStream;
-use std::convert::TryFrom;
-
-pub(crate) trait IntoEvent<T> {
-    fn into_event(self, params: T) -> Event;
-}
-enum EventTypes {
-    Color,
-}
-impl TryFrom<String> for EventTypes {
-    type Error = String;
-    fn try_from(value: String) -> Result<Self, Self::Error> {
-        match value.to_lowercase().as_str() {
-            "color" => Ok(EventTypes::Color),
-            x => {
-                println!("did not get a useable event. Got : {:?}", x);
-                Err(x.to_string())
-            }
-        }
-    }
-}
-
-enum Event {
-    Color(String),
-}
+use events::{Event, EventStream};
 
 pub struct EditorContext {
     _layer: LayerId,
