@@ -1,3 +1,4 @@
+use super::event_params::AddRectangle;
 use serde_json::Value;
 use std::convert::{TryFrom, TryInto};
 
@@ -6,12 +7,14 @@ pub(crate) trait IntoEvent<T> {
 }
 pub(crate) enum EventTypes {
     Color,
+    AddRectangle,
 }
 impl TryFrom<String> for EventTypes {
     type Error = String;
     fn try_from(value: String) -> Result<Self, Self::Error> {
         match value.to_lowercase().as_str() {
             "color" => Ok(EventTypes::Color),
+            "addrectangle" => Ok(EventTypes::AddRectangle),
             x => {
                 println!("did not get a useable event. Got : {:?}", x);
                 Err(x.to_string())
@@ -22,6 +25,7 @@ impl TryFrom<String> for EventTypes {
 
 pub(crate) enum Event {
     Color(String),
+    AddRectangle(AddRectangle),
 }
 
 impl IntoEvent<Value> for EventTypes {
@@ -34,6 +38,14 @@ impl IntoEvent<Value> for EventTypes {
                     x
                 ),
             }),
+            EventTypes::AddRectangle => {
+                Event::AddRectangle(serde_json::from_value(params).unwrap_or_else(|x| {
+                    panic!(
+                        "Error deserializing params for AddRectangle event : {:?}",
+                        x
+                    )
+                }))
+            }
         }
     }
 }

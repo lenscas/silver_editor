@@ -1,8 +1,9 @@
 import * as React from "react"
 import { Menu } from "./menu"
 import { Color } from "./color"
+import { Rectangle } from "./rectangle"
 
-export type EditableComponent = "color" | "test"
+export type EditableComponent = "color" | "AddRectangle"
 
 type BasicEditorState = {
 	current_window?: EditableComponent
@@ -12,7 +13,10 @@ const RenderCorrectEditor = (selected?: EditableComponent) => {
 	switch (selected) {
 		case "color":
 			return <Color />
+		case "AddRectangle":
+			return <Rectangle />
 		default:
+			console.error("invalid selection. Got :", selected)
 			return <></>
 	}
 }
@@ -23,7 +27,7 @@ export class BasicEditor extends React.Component<{}, BasicEditorState> {
 		this.state = {}
 	}
 	render() {
-		return <div className="container">
+		return <div className="container-fluid">
 			<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
 				integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossOrigin="anonymous" />
 			<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"

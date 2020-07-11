@@ -1,3 +1,4 @@
+mod event_params;
 mod shared_event_logic;
 
 #[cfg(not(target_arch = "wasm32"))]

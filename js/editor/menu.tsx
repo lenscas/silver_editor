@@ -3,7 +3,7 @@ import { EditableComponent } from "./basic_editor"
 
 const Choice = (name: EditableComponent, chosen: (comp: EditableComponent) => void) => {
 	const click = () => chosen(name)
-	return <a href="#" onClick={click}>{name}</a>
+	return <p><a href="#" onClick={click}>{name}</a></p>
 }
 
 export type MenuProperties = {
@@ -14,9 +14,8 @@ export type MenuProperties = {
 export class Menu extends React.Component<MenuProperties> {
 	render() {
 		return <div>
-			{
-				Choice("color", this.props.select_window)
-			}
+			{Choice("color", this.props.select_window)}
+			{Choice("AddRectangle", this.props.select_window)}
 		</div>
 	}
 }

@@ -16,6 +16,13 @@ type WindowWithEditor = Window & { silver_editor: EditorSpace }
 type Event = {
 	event_type: "color"
 	params: String
+} | {
+	event_type: "AddRectangle"
+	params: {
+		color: string,
+		location: [number, number],
+		size: [number, number]
+	}
 }
 
 declare global {
