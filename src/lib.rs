@@ -1,15 +1,8 @@
 use mergui::{Context, LayerId};
 use quicksilver::{graphics::Color, Graphics};
 
-#[cfg(target_arch = "wasm32")]
-mod get_events_web;
-#[cfg(target_arch = "wasm32")]
-use crate::get_events_web as get_events;
-
-#[cfg(not(target_arch = "wasm32"))]
-mod get_events_native;
-#[cfg(not(target_arch = "wasm32"))]
-use crate::get_events_native as get_events;
+mod events;
+use events::events::EventStream;
 use std::convert::TryFrom;
 
 pub(crate) trait IntoEvent<T> {
@@ -36,19 +29,18 @@ enum Event {
 }
 
 pub struct EditorContext {
-    layer: LayerId,
+    _layer: LayerId,
     color: Color,
-    event_stream: get_events::EventStream,
+    event_stream: EventStream,
 }
 impl EditorContext {
     pub fn new(context: &mut Context) -> Self {
         let layer = context.add_layer();
 
-        get_events::inject_button_to_editor();
         Self {
-            layer,
+            _layer: layer,
             color: Color::WHITE,
-            event_stream: get_events::EventStream::new(),
+            event_stream: EventStream::new(),
         }
     }
     pub fn update(&mut self) {
@@ -61,5 +53,5 @@ impl EditorContext {
     pub fn draw(&self, gfx: &mut Graphics) {
         gfx.clear(self.color)
     }
-    pub fn event(&mut self, event: &quicksilver::input::Event) {}
+    pub fn event(&mut self, _event: &quicksilver::input::Event) {}
 }

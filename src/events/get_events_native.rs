@@ -1,16 +1,14 @@
-use crate::{Event, EventTypes, IntoEvent};
+use super::shared_event_logic::json_value_iter_to_event_iter;
+use crate::Event;
 use bytes::Buf;
 use serde_json::value::Value;
 use std::{
-    any::Any,
-    convert::{TryFrom, TryInto},
     sync::{Arc, Mutex},
     thread::JoinHandle,
 };
 use tokio::runtime::Runtime;
 use warp::{reply::html, Filter};
 
-pub(crate) fn inject_button_to_editor() {}
 pub(crate) struct EventStream {
     _warp_thread: JoinHandle<()>,
     events: Arc<Mutex<Vec<Value>>>,
@@ -27,16 +25,16 @@ impl EventStream {
                 warp::serve(
                     warp::any()
                         .and(warp::path("editor.js").and(warp::get()).map(|| {
-                            let output = include_str!("../build/app.js");
+                            let output = include_str!("../../build/app.js");
                             output
                         }))
                         .or(warp::path("app.js.map")
                             .and(warp::get())
-                            .map(|| include_str!("../build/app.js.map")))
+                            .map(|| include_str!("../../build/app.js.map")))
                         .or(warp::path::end()
                             .and(warp::get())
                             .map(|| {
-                                let output = include_str!("../static/editor_native.html");
+                                let output = include_str!("../../static/editor_native.html");
                                 html(output)
                             })
                             .or(warp::post().and(
@@ -83,36 +81,6 @@ impl EventStream {
             .expect("Could not get access to the events");
         let len = res.len();
         let res: Vec<_> = res.drain(0..len).collect();
-        res.into_iter()
-            .map(|v| match v {
-                Value::Object(x) => x,
-                x => panic!("Event is not an object, got : {:?}", x),
-            })
-            .map(|mut x| {
-                let event = x
-                    .remove("event_type")
-                    .expect("Could not get event type. Error");
-                let event = match event {
-                    Value::String(x) => x,
-                    x => panic!("Event type is not a string. got : {:?}", x),
-                };
-                let event: EventTypes = event.try_into().expect("could not parse event type");
-
-                event.into_event(x.remove("params").expect("Could not get params from event"))
-            })
-    }
-}
-
-impl IntoEvent<Value> for EventTypes {
-    fn into_event(self, params: Value) -> Event {
-        match self {
-            EventTypes::Color => Event::Color(match params {
-                Value::String(x) => x,
-                x => panic!(
-                    "color event did not have the correct parameters, got : {:?}",
-                    x
-                ),
-            }),
-        }
+        json_value_iter_to_event_iter(res.into_iter())
     }
 }
