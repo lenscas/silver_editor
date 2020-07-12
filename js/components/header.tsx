@@ -1,12 +1,25 @@
 import * as React from "react"
 import { EditableComponent } from "../editor/basic_editor"
 
+export const default_theme: PossibleTheme = {
+	is_default: true,
+	name: "default",
+	element: < link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+		integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossOrigin="anonymous" />
+}
+
 type ApiResponse = {
 	name: string, cssCdn: string,
 }
 
 export type PossibleTheme = {
+	is_default: false,
 	name: string,
+	link: string,
+	element: JSX.Element
+} | {
+	is_default: true,
+	name: "default",
 	element: JSX.Element
 }
 
@@ -25,11 +38,13 @@ export class Header extends React.Component<HeaderProps, HeaderState> {
 		const res = await fetch("https://bootswatch.com/api/4.json")
 		const body = await res.json() as { themes: ApiResponse[] }
 		this.setState(state => ({
-			...state, options: body.themes.map(x => ({
+			...state, options: [default_theme].concat(body.themes.map(x => ({
+				is_default: false,
+				link: x.cssCdn,
 				name: x.name,
 				element: <link rel="stylesheet" href={x.cssCdn} crossOrigin="anonymous" />
 			}
-			))
+			)))
 		}))
 	}
 	render_options() {
@@ -48,25 +63,6 @@ export class Header extends React.Component<HeaderProps, HeaderState> {
 	render() {
 		return <nav className="navbar navbar-expand-lg navbar-dark bg-dark">{this.render_options()}</nav>
 	}
-	/*
-export const Header = ({set_theme, current}:) => {
-return <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-
-			<ul className="navbar-nav">
-				<li className="nav-item dropdown">
-					<a className="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-						Themes</a>
-
-					<a className="dropdown-item" href="#">Default</a>
-					<a className="dropdown-item" href="#">Dark</a>
-					<a className="dropdown-item" href="#"></a>
-				</div>
-			</li>
-			<script>console.log($("body"))</script>
-		</ul>
-	</div>
-</nav >
-}*/
 }
 export const RenderName = (props: { name: EditableComponent }) => {
 	if (props.name == "nothing") {

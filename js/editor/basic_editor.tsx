@@ -2,7 +2,7 @@ import * as React from "react"
 import { Menu } from "./menu"
 import { Color } from "./color"
 import { Rectangle } from "./rectangle"
-import { Header, RenderName, PossibleTheme } from "../components/header"
+import { Header, RenderName, PossibleTheme, default_theme } from "../components/header"
 
 export type EditableComponent = "color" | "AddRectangle" | "nothing"
 
@@ -28,18 +28,36 @@ const RenderCorrectEditor = (selected?: EditableComponent) => {
 export class BasicEditor extends React.Component<{}, BasicEditorState> {
 	constructor(props: {}) {
 		super(props)
-		this.state = {
-			current_window: "nothing", selected_theme: {
-				name: "default",
-				element: < link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
-					integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossOrigin="anonymous" />
+		let v = localStorage.getItem("editor_last_selected")
+		let selected = default_theme;
+		if (v) {
+			let x = JSON.parse(v) as { name: string, link: string }
+			selected = {
+				is_default: false,
+				name: x.name,
+				element: <link rel="stylesheet" href={x.link} />,
+				link: x.link
 			}
 		}
+		this.state = {
+			current_window: "nothing", selected_theme: selected
+		}
+	}
+	set_theme(theme: PossibleTheme) {
+		this.setState(state => {
+			if (theme.is_default) {
+				localStorage.removeItem("editor_last_selected")
+			} else {
+				localStorage.setItem("editor_last_selected", JSON.stringify({ name: theme.name, link: theme.link }))
+			}
+			return { ...state, selected_theme: theme }
+
+		})
 	}
 	render() {
 		return <div className="container-fluid" style={{ maxHeight: "100vh", paddingLeft: "0px", paddingRight: "0px" }}>
 			{this.state.selected_theme.element}
-			<Header current={this.state.selected_theme.name} set_theme={(theme) => this.setState(state => ({ ...state, selected_theme: theme }))} />
+			<Header current={this.state.selected_theme.name} set_theme={(t) => this.set_theme(t)} />
 			<div className="row" style={{ height: "100vh", maxHeight: "100vh", marginRight: "0px" }}>
 				<div className="menu col-2">
 					<Menu selected={this.state.current_window} select_window={(a) => this.setState(x => ({ ...x, current_window: a }))} />
