@@ -14,7 +14,7 @@ fn get_events() -> impl Iterator<Item = Event> {
 }
 
 pub(crate) fn inject_button_to_editor() {
-    let content = include_str!("../../static/editor_index.html");
+    let content = include_str!("../../static/editor_wasm.html");
     js! {
         window.silver_editor.setup_extra_window_button(@{content});
     }

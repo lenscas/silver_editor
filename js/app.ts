@@ -74,10 +74,16 @@ export const setup_extra_window_button = (contents: string) => {
 		if (window2) {
 			if (!("silver_editor" in window2)) {
 				window2["silver_editor"] = editor
+				const jquery = Object.keys(window).find(x => { console.log(x, x.startsWith("jQuery")); return x.startsWith("jQuery") });
+				if (jquery) {
+					(window2 as any)[jquery] = (window as any)[jquery];
+				} else {
+					console.error("Couldn't find jquery to move over :(")
+				}
 			}
 			console.log(contents)
 			//window2.document.write(basic_layout);
-			window2.document.body.insertAdjacentHTML("afterbegin", contents);
+			window2.document.write(contents);
 			render_editor(window2)
 		}
 	})
