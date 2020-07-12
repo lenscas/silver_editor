@@ -1,4 +1,6 @@
 import { render_editor } from "./editor"
+import 'bootstrap';
+import 'jquery';
 
 export { render_editor } from "./editor"
 

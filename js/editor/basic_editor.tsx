@@ -2,11 +2,13 @@ import * as React from "react"
 import { Menu } from "./menu"
 import { Color } from "./color"
 import { Rectangle } from "./rectangle"
+import { Header, RenderName, PossibleTheme } from "../components/header"
 
-export type EditableComponent = "color" | "AddRectangle"
+export type EditableComponent = "color" | "AddRectangle" | "nothing"
 
 type BasicEditorState = {
-	current_window?: EditableComponent
+	current_window: EditableComponent
+	selected_theme: PossibleTheme
 }
 
 const RenderCorrectEditor = (selected?: EditableComponent) => {
@@ -15,6 +17,8 @@ const RenderCorrectEditor = (selected?: EditableComponent) => {
 			return <Color />
 		case "AddRectangle":
 			return <Rectangle />
+		case "nothing":
+			return <></>
 		default:
 			console.error("invalid selection. Got :", selected)
 			return <></>
@@ -24,27 +28,31 @@ const RenderCorrectEditor = (selected?: EditableComponent) => {
 export class BasicEditor extends React.Component<{}, BasicEditorState> {
 	constructor(props: {}) {
 		super(props)
-		this.state = {}
+		this.state = {
+			current_window: "nothing", selected_theme: {
+				name: "default",
+				element: < link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+					integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossOrigin="anonymous" />
+			}
+		}
 	}
 	render() {
-		return <div className="container-fluid">
-			<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
-				integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossOrigin="anonymous" />
-			<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
-				integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-				crossOrigin="anonymous"></script>
-			<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
-				integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
-				crossOrigin="anonymous"></script>
-			<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
-				integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
-				crossOrigin="anonymous"></script>
-			<div className="row">
+		return <div className="container-fluid" style={{ maxHeight: "100vh", paddingLeft: "0px", paddingRight: "0px" }}>
+			{this.state.selected_theme.element}
+			<Header current={this.state.selected_theme.name} set_theme={(theme) => this.setState(state => ({ ...state, selected_theme: theme }))} />
+			<div className="row" style={{ height: "100vh", maxHeight: "100vh", marginRight: "0px" }}>
 				<div className="menu col-2">
-					<Menu select_window={(a) => this.setState(x => ({ ...x, current_window: a }))} />
+					<Menu selected={this.state.current_window} select_window={(a) => this.setState(x => ({ ...x, current_window: a }))} />
 				</div>
-				<div className="editor col">
-					{RenderCorrectEditor(this.state.current_window)}
+				<div className="editor col" style={{ maxHeight: "100vh", overflow: "auto" }}>
+					<div className="card" style={{ marginTop: "15px" }}>
+						<div className="card-header">
+							<RenderName name={this.state.current_window} />
+						</div>
+						<div className="card-body">
+							{RenderCorrectEditor(this.state.current_window)}
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>

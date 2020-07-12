@@ -1,5 +1,5 @@
 import * as React from "react"
-import { BasicForm, number_validation, BasicFormProps, always } from "../components.tsx/basic_form"
+import { BasicForm, number_validation, BasicFormProps, always } from "../components/basic_form"
 import { add_event_to_queue } from "../app"
 
 type Rect = {
@@ -15,7 +15,6 @@ export class Rectangle extends React.Component {
 	render() {
 		//const fields: BasicFormProps<Rect>["inputs"] =
 		return <div>
-			<h2>Create a rectangle</h2>
 			<BasicForm<Rect> inputs={[
 				{
 					name: "color",
