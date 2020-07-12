@@ -4,7 +4,6 @@ on:
     # Sequence of patterns matched against refs/heads
     branches:
       - master
-      - test_auto_deploy
     paths:
       - "src/**.rs"
       - "js/**.ts"
