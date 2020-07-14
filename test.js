@@ -642,7 +642,10 @@ exports.get_events = () => {
         }
     }
 };
-exports.setup_extra_window_button = (contents) => {
+exports.setup_extra_window_button = (contents, element) => {
+    if (!element) {
+        throw new Error("Did not get an element.");
+    }
     const editor = get_silver_editor();
     editor.internal.has_shared_memory = true;
     const button = document.createElement("button");
@@ -668,7 +671,7 @@ exports.setup_extra_window_button = (contents) => {
             editor_1.render_editor(window2);
         }
     });
-    document.getElementsByTagName("body")[0].append(button);
+    element.append(button);
 };
 exports.hello_from_second_page = () => console.log("nice?");
 exports.add_event_to_queue = (e) => {
@@ -47703,9 +47706,6 @@ module.exports = g;
             "__cargo_web_snippet_2f9d75f8cdce0e9fe628bef173769c02778f0324": function($0, $1, $2) {
                 $0 = Module.STDWEB_PRIVATE.to_js($0);$1 = Module.STDWEB_PRIVATE.to_js($1);$2 = Module.STDWEB_PRIVATE.to_js($2);($0).blendFunc(($1),($2));
             },
-            "__cargo_web_snippet_30fe3b8634b6e66ab5d9be1711594831fc0e6798": function($0) {
-                $0 = Module.STDWEB_PRIVATE.to_js($0);window.silver_editor.setup_extra_window_button(($0));
-            },
             "__cargo_web_snippet_31f6071b77215fa0db4e2754d20833403f06a364": function($0) {
                 var r = Module.STDWEB_PRIVATE.acquire_js_reference( $0 );return (r instanceof DOMException) && (r.name === "InvalidAccessError");
             },
@@ -48020,6 +48020,9 @@ module.exports = g;
             },
             "__cargo_web_snippet_d72f1bf9760c09ffac6be0f5ceba99a1366116b0": function($0, $1, $2, $3, $4) {
                 $0 = Module.STDWEB_PRIVATE.to_js($0);$1 = Module.STDWEB_PRIVATE.to_js($1);$2 = Module.STDWEB_PRIVATE.to_js($2);$3 = Module.STDWEB_PRIVATE.to_js($3);$4 = Module.STDWEB_PRIVATE.to_js($4);($0).blendColor(($1),($2),($3),($4));
+            },
+            "__cargo_web_snippet_d88639b81aaab4b051769bf1356222323e3c77f9": function($0, $1, $2, $3) {
+                $0 = Module.STDWEB_PRIVATE.to_js($0);$1 = Module.STDWEB_PRIVATE.to_js($1);$2 = Module.STDWEB_PRIVATE.to_js($2);$3 = Module.STDWEB_PRIVATE.to_js($3);let el;if(($0)){el=document.getElementsByTagName(($1))[0]}else{el=document.getElementById(($2))}window.silver_editor.setup_extra_window_button(($3),el);
             },
             "__cargo_web_snippet_d9e82ca6efcbcc7a92067b28ec48fd1430706f9c": function($0, $1, $2) {
                 $1 = Module.STDWEB_PRIVATE.to_js($1);$2 = Module.STDWEB_PRIVATE.to_js($2);Module.STDWEB_PRIVATE.from_js($0, (function(){return($1).getExtension(($2));})());
