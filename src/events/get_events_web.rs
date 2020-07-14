@@ -1,4 +1,5 @@
 use super::{shared_event_logic::json_value_iter_to_event_iter, Event};
+use crate::{AttachButtonAt, EditorConfig};
 use stdweb::js;
 
 fn get_events() -> impl Iterator<Item = Event> {
@@ -13,16 +14,26 @@ fn get_events() -> impl Iterator<Item = Event> {
     )
 }
 
-pub(crate) fn inject_button_to_editor() {
+pub(crate) fn inject_button_to_editor(config: EditorConfig) {
     let content = include_str!("../../static/editor_wasm.html");
+    let (element, id) = match config.web_config.button_loc {
+        AttachButtonAt::Id(x) => (None, Some(x)),
+        AttachButtonAt::Element(x) => (Some(x), None),
+    };
     js! {
-        window.silver_editor.setup_extra_window_button(@{content});
+        let el;
+        if(@{element.clone()}){
+            el = document.getElementsByTagName(@{element})[0]
+        } else {
+            el = document.getElementById(@{id})
+        }
+        window.silver_editor.setup_extra_window_button(@{content},el);
     }
 }
 pub(crate) struct EventStream {}
 impl EventStream {
-    pub(crate) fn new() -> Self {
-        inject_button_to_editor();
+    pub(crate) fn new(config: EditorConfig) -> Self {
+        inject_button_to_editor(config);
         EventStream {}
     }
     pub(crate) fn get_events(&mut self) -> impl Iterator<Item = Event> {

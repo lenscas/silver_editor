@@ -48,7 +48,7 @@ async fn app(window: Window, mut gfx: Graphics, mut inputs: Input) -> Result<()>
     gfx.clear(Color::WHITE);
     gfx.present(&window)?;
     let mut context = Context::new();
-    let mut edit_context = EditorContext::new(&mut context);
+    let mut edit_context = EditorContext::new(&mut context, Default::default());
     loop {
         while inputs.next_event().await.is_some() {}
         edit_context.update();

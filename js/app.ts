@@ -62,7 +62,10 @@ export const get_events = () => {
 
 }
 
-export const setup_extra_window_button = (contents: string) => {
+export const setup_extra_window_button = (contents: string, element : HTMLElement) => {
+	if(!element){
+		throw new Error("Did not get an element.")
+	}
 	const editor = get_silver_editor()
 	editor.internal.has_shared_memory = true;
 	const button = document.createElement("button")
@@ -87,7 +90,7 @@ export const setup_extra_window_button = (contents: string) => {
 			render_editor(window2)
 		}
 	})
-	document.getElementsByTagName("body")[0].append(button)
+	element.append(button)
 }
 export const hello_from_second_page = () => console.log("nice?")
 

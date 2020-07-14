@@ -1,4 +1,5 @@
 use super::shared_event_logic::{json_value_iter_to_event_iter, Event};
+use crate::EditorConfig;
 use bytes::Buf;
 use serde_json::value::Value;
 use std::{
@@ -14,12 +15,23 @@ pub(crate) struct EventStream {
 }
 
 impl EventStream {
-    pub(crate) fn new() -> Self {
+    pub(crate) fn new(config: EditorConfig) -> Self {
         let events: Arc<Mutex<Vec<Value>>> = Default::default();
         let local_copy = events.clone();
         let thread =
             std::thread::spawn(move || {
                 let mut rt = Runtime::new().expect("Could not create tokio runtime :(");
+                println!(
+                    "starting editor at `http://{:0}:{:1}`",
+                    config
+                        .native_config
+                        .address
+                        .iter()
+                        .map(|x| x.to_string())
+                        .collect::<Vec<_>>()
+                        .join("."),
+                    config.native_config.port
+                );
                 rt.block_on(
                 warp::serve(
                     warp::any()
@@ -65,7 +77,7 @@ impl EventStream {
                                 ),
                             ))),
                 )
-                .run(([0, 0, 0, 0], 3030)),
+                .run((config.native_config.address,config.native_config.port)),
             );
             });
         EventStream {
