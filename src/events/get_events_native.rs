@@ -18,21 +18,20 @@ impl EventStream {
     pub(crate) fn new(config: EditorConfig) -> Self {
         let events: Arc<Mutex<Vec<Value>>> = Default::default();
         let local_copy = events.clone();
-        let thread =
-            std::thread::spawn(move || {
-                let mut rt = Runtime::new().expect("Could not create tokio runtime :(");
-                println!(
-                    "starting editor at `http://{:0}:{:1}`",
-                    config
-                        .native_config
-                        .address
-                        .iter()
-                        .map(|x| x.to_string())
-                        .collect::<Vec<_>>()
-                        .join("."),
-                    config.native_config.port
-                );
-                rt.block_on(
+        let thread = std::thread::spawn(move || {
+            let mut rt = Runtime::new().expect("Could not create tokio runtime :(");
+            println!(
+                "starting editor at `http://{:0}:{:1}`",
+                config
+                    .native_config
+                    .address
+                    .iter()
+                    .map(|x| x.to_string())
+                    .collect::<Vec<_>>()
+                    .join("."),
+                config.native_config.port
+            );
+            rt.block_on(
                 warp::serve(
                     warp::any()
                         .and(warp::path("editor.js").and(warp::get()).map(|| {
@@ -50,36 +49,47 @@ impl EventStream {
                             })
                             .or(warp::post().and(
                                 warp::path("event").and(warp::filters::body::bytes()).map(
-									move |x: bytes::Bytes| {
-									let x = String::from_utf8(x.bytes().to_vec());
-									let body = match x {
-										Err(x) => {
-											println!("Could not turn event body into string {:?}",x );
-											return "failed";
-										},
-										Ok(x) => x
-									};
-									let x = match serde_json::from_str::<serde_json::Value>(&body) {
-										Ok(x) => x,
-										Err(x) => {
-											println!("Could not parse event as json error : {:?}",x);
-											return "failed"
-										}
-									};
-									match local_copy.try_lock() {
-										Ok(mut y) => {
-											y.push(x);
-										},
-										Err(x) => {println!("Could not push event. Error : {:?}",x);return "failed"}
-									}
-									"awesome"
-								}
+                                    move |x: bytes::Bytes| {
+                                        let x = String::from_utf8(x.bytes().to_vec());
+                                        let body = match x {
+                                            Err(x) => {
+                                                println!(
+                                                    "Could not turn event body into string {:?}",
+                                                    x
+                                                );
+                                                return "failed";
+                                            }
+                                            Ok(x) => x,
+                                        };
+                                        let x = match serde_json::from_str::<serde_json::Value>(
+                                            &body,
+                                        ) {
+                                            Ok(x) => x,
+                                            Err(x) => {
+                                                println!(
+                                                    "Could not parse event as json error : {:?}",
+                                                    x
+                                                );
+                                                return "failed";
+                                            }
+                                        };
+                                        match local_copy.try_lock() {
+                                            Ok(mut y) => {
+                                                y.push(x);
+                                            }
+                                            Err(x) => {
+                                                println!("Could not push event. Error : {:?}", x);
+                                                return "failed";
+                                            }
+                                        }
+                                        "awesome"
+                                    },
                                 ),
                             ))),
                 )
-                .run((config.native_config.address,config.native_config.port)),
+                .run((config.native_config.address, config.native_config.port)),
             );
-            });
+        });
         EventStream {
             _warp_thread: thread,
             events,
