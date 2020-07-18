@@ -1,4 +1,7 @@
-use super::shared_event_logic::{json_value_iter_to_event_iter, Event};
+use super::{
+    shared_event_logic::{json_value_iter_to_event_iter, Event},
+    SendEvents,
+};
 use crate::EditorConfig;
 use bytes::Buf;
 use serde_json::value::Value;
@@ -6,18 +9,32 @@ use std::{
     sync::{Arc, Mutex},
     thread::JoinHandle,
 };
-use tokio::runtime::Runtime;
-use warp::{reply::html, Filter};
+use tokio::{
+    runtime::{self, Runtime},
+    sync::{mpsc, RwLock},
+};
+use warp::{
+    reply::html,
+    ws::{Message, WebSocket},
+    Filter,
+};
+
+use futures::{FutureExt, StreamExt};
 
 pub(crate) struct EventStream {
     _warp_thread: JoinHandle<()>,
     events: Arc<Mutex<Vec<Value>>>,
+    editor_handles: EditorHandles,
 }
+
+type EditorHandles = Arc<RwLock<Vec<mpsc::UnboundedSender<Result<Message, warp::Error>>>>>;
 
 impl EventStream {
     pub(crate) fn new(config: EditorConfig) -> Self {
         let events: Arc<Mutex<Vec<Value>>> = Default::default();
         let local_copy = events.clone();
+        let editors: EditorHandles = Default::default();
+        let editors_2 = editors.clone();
         let thread = std::thread::spawn(move || {
             let mut rt = Runtime::new().expect("Could not create tokio runtime :(");
             println!(
@@ -41,6 +58,23 @@ impl EventStream {
                         .or(warp::path("app.js.map")
                             .and(warp::get())
                             .map(|| include_str!("../../build/app.js.map")))
+                        .or(warp::path("ws")
+                            .and(warp::ws())
+                            .map(move |ws: warp::ws::Ws| {
+                                let editors = editors.clone();
+                                ws.on_upgrade(move |socket| async move {
+                                    let (editor_ws_tx, _) = socket.split();
+                                    let (tx, rx) = mpsc::unbounded_channel();
+                                    tokio::task::spawn(rx.forward(editor_ws_tx).map(|result| {
+                                        if let Err(e) = result {
+                                            eprintln!("Websocket send error: {}", e)
+                                        }
+                                    }));
+                                    let len = editors.read().await.len();
+                                    editors.write().await.insert(len, tx);
+                                    //maybe try looping over a channel here that tells it what to send instead of working with an array of channels
+                                })
+                            }))
                         .or(warp::path::end()
                             .and(warp::get())
                             .map(|| {
@@ -93,6 +127,7 @@ impl EventStream {
         EventStream {
             _warp_thread: thread,
             events,
+            editor_handles: editors_2,
         }
     }
     pub(crate) fn get_events(&mut self) -> impl Iterator<Item = Event> {
@@ -103,5 +138,20 @@ impl EventStream {
         let len = res.len();
         let res: Vec<_> = res.drain(0..len).collect();
         json_value_iter_to_event_iter(res.into_iter())
+    }
+    pub(crate) fn send_event(&mut self, event: SendEvents) {
+        let mut basic_rt = runtime::Builder::new()
+            .basic_scheduler()
+            .build()
+            .expect("Couldn't create a simple tokio runtime.");
+        basic_rt.block_on(async {
+            let mut handlers = self.editor_handles.write().await;
+            for handle in handlers.iter_mut() {
+                let res = handle.send(Ok(Message::text(
+                    serde_json::to_string(&event).expect("Could not serialize event"),
+                )));
+                println!("got here?")
+            }
+        })
     }
 }

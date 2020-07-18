@@ -2,6 +2,8 @@ import { render_editor } from "./editor"
 import 'bootstrap';
 import 'jquery';
 
+import { Event } from "./events"
+
 export { render_editor } from "./editor"
 
 type EditorSpace = {
@@ -14,18 +16,6 @@ type EditorSpace = {
 }
 
 type WindowWithEditor = Window & { silver_editor: EditorSpace }
-
-type Event = {
-	event_type: "color"
-	params: String
-} | {
-	event_type: "AddRectangle"
-	params: {
-		color: string,
-		location: [number, number],
-		size: [number, number]
-	}
-}
 
 declare global {
 	interface Window { silver_editor: any }
@@ -62,8 +52,8 @@ export const get_events = () => {
 
 }
 
-export const setup_extra_window_button = (contents: string, element : HTMLElement) => {
-	if(!element){
+export const setup_extra_window_button = (contents: string, element: HTMLElement) => {
+	if (!element) {
 		throw new Error("Did not get an element.")
 	}
 	const editor = get_silver_editor()

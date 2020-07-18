@@ -4,25 +4,15 @@ import { Color } from "./color"
 import { Rectangle } from "./rectangle"
 import { Header, RenderName, PossibleTheme, default_theme } from "../components/header"
 
+import { make_event_stream } from "../incoming_events/websocket_client"
+import { IncommingEvents } from "../incoming_events/incoming_events"
+
 export type EditableComponent = "color" | "AddRectangle" | "nothing"
 
 type BasicEditorState = {
 	current_window: EditableComponent
 	selected_theme: PossibleTheme
-}
-
-const RenderCorrectEditor = (selected?: EditableComponent) => {
-	switch (selected) {
-		case "color":
-			return <Color />
-		case "AddRectangle":
-			return <Rectangle />
-		case "nothing":
-			return <></>
-		default:
-			console.error("invalid selection. Got :", selected)
-			return <></>
-	}
+	edit_params?: IncommingEvents
 }
 
 export class BasicEditor extends React.Component<{}, BasicEditorState> {
@@ -41,6 +31,32 @@ export class BasicEditor extends React.Component<{}, BasicEditorState> {
 		}
 		this.state = {
 			current_window: "nothing", selected_theme: selected
+		}
+		make_event_stream((event) => {
+			this.setState(state => ({
+				...state,
+				current_window: event.EditRectangle ? "AddRectangle" : "nothing",
+				edit_params: event
+			}))
+		})
+	}
+
+	RenderCorrectEditor = (selected: EditableComponent) => {
+		switch (selected) {
+			case "color":
+				return <Color />
+			case "AddRectangle":
+				if (this.state.edit_params && this.state.edit_params.EditRectangle) {
+					return <Rectangle editData={this.state.edit_params.EditRectangle} />
+				} else {
+					return <Rectangle />
+				}
+
+			case "nothing":
+				return <></>
+			default:
+				console.error("invalid selection. Got :", selected)
+				return <></>
 		}
 	}
 	set_theme(theme: PossibleTheme) {
@@ -68,7 +84,7 @@ export class BasicEditor extends React.Component<{}, BasicEditorState> {
 							<RenderName name={this.state.current_window} />
 						</div>
 						<div className="card-body">
-							{RenderCorrectEditor(this.state.current_window)}
+							{this.RenderCorrectEditor(this.state.current_window)}
 						</div>
 					</div>
 				</div>

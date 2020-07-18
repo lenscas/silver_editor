@@ -1,6 +1,9 @@
 import * as React from "react"
 import { BasicForm, number_validation, BasicFormProps, always } from "../components/basic_form"
 import { add_event_to_queue } from "../app"
+import { v4 } from "uuid"
+import { AddRectangleEvent, EditRectangleEvent } from "../events"
+import { EditRectangle } from "../incoming_events/incoming_events"
 
 type Rect = {
 	color: string,
@@ -10,8 +13,11 @@ type Rect = {
 	pos_y: number
 }
 
+export type RectangleProps = {
+	editData?: EditRectangle["EditRectangle"]
+}
 
-export class Rectangle extends React.Component {
+export class Rectangle extends React.Component<RectangleProps> {
 	render() {
 		//const fields: BasicFormProps<Rect>["inputs"] =
 		return <div>
@@ -19,37 +25,47 @@ export class Rectangle extends React.Component {
 				{
 					name: "color",
 					type: "color",
-					validation: always
+					validation: always,
+					start_value: this.props.editData?.color
+
 				},
 				{
 					name: "length_x",
 					type: "number",
-					validation: number_validation
+					validation: number_validation,
+					start_value: this.props.editData?.size[0]
 				},
 				{
 					name: "length_y",
 					type: "number",
-					validation: number_validation
+					validation: number_validation,
+					start_value: this.props.editData?.size[1]
 				}, {
 					name: "pos_x",
 					type: "number",
-					validation: number_validation
+					validation: number_validation,
+					start_value: this.props.editData?.location[0]
 				},
 				{
 					name: "pos_y",
 					type: "number",
-					validation: number_validation
+					validation: number_validation,
+					start_value: this.props.editData?.location[1]
 				}
 			]
 			} on_submit={x => {
-				add_event_to_queue({
-					event_type: "AddRectangle",
+				let id = this.props.editData?.id || v4()
+				let event_type: AddRectangleEvent["event_type"] | EditRectangleEvent["event_type"] = this.props.editData?.id ? "EditRectangle" : "AddRectangle"
+				let event: AddRectangleEvent | EditRectangleEvent = {
+					event_type,
 					params: {
 						color: x.get("color") as string,
 						size: [Number(x.get("length_x")), Number(x.get("length_y"))],
-						location: [Number(x.get("pos_x")), Number(x.get("pos_y"))]
+						location: [Number(x.get("pos_x")), Number(x.get("pos_y"))],
+						id
 					}
-				})
+				}
+				add_event_to_queue(event)
 			}} />
 		</div>
 	}

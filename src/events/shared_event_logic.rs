@@ -8,6 +8,7 @@ pub(crate) trait IntoEvent<T> {
 pub(crate) enum EventTypes {
     Color,
     AddRectangle,
+    EditRectangle,
 }
 impl TryFrom<String> for EventTypes {
     type Error = String;
@@ -15,6 +16,7 @@ impl TryFrom<String> for EventTypes {
         match value.to_lowercase().as_str() {
             "color" => Ok(EventTypes::Color),
             "addrectangle" => Ok(EventTypes::AddRectangle),
+            "editrectangle" => Ok(EventTypes::EditRectangle),
             x => {
                 println!("did not get a useable event. Got : {:?}", x);
                 Err(x.to_string())
@@ -26,6 +28,7 @@ impl TryFrom<String> for EventTypes {
 pub(crate) enum Event {
     Color(String),
     AddRectangle(AddRectangle),
+    EditRectangle(AddRectangle),
 }
 
 impl IntoEvent<Value> for EventTypes {
@@ -42,6 +45,14 @@ impl IntoEvent<Value> for EventTypes {
                 Event::AddRectangle(serde_json::from_value(params).unwrap_or_else(|x| {
                     panic!(
                         "Error deserializing params for AddRectangle event : {:?}",
+                        x
+                    )
+                }))
+            }
+            EventTypes::EditRectangle => {
+                Event::EditRectangle(serde_json::from_value(params).unwrap_or_else(|x| {
+                    panic!(
+                        "Error deserializing params for EditRectangle event : {:?}",
                         x
                     )
                 }))
