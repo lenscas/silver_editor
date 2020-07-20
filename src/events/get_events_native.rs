@@ -13,11 +13,7 @@ use tokio::{
     runtime::{self, Runtime},
     sync::{mpsc, RwLock},
 };
-use warp::{
-    reply::html,
-    ws::{Message, WebSocket},
-    Filter,
-};
+use warp::{reply::html, ws::Message, Filter};
 
 use futures::{FutureExt, StreamExt};
 
@@ -147,7 +143,8 @@ impl EventStream {
         basic_rt.block_on(async {
             let mut handlers = self.editor_handles.write().await;
             for handle in handlers.iter_mut() {
-                let res = handle.send(Ok(Message::text(
+                //TODO handle this error in a good way
+                let _ = handle.send(Ok(Message::text(
                     serde_json::to_string(&event).expect("Could not serialize event"),
                 )));
                 println!("got here?")
