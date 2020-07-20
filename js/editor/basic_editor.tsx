@@ -32,13 +32,14 @@ export class BasicEditor extends React.Component<{}, BasicEditorState> {
 		this.state = {
 			current_window: "nothing", selected_theme: selected
 		}
-		make_event_stream((event) => {
-			this.setState(state => ({
-				...state,
-				current_window: event.EditRectangle ? "AddRectangle" : "nothing",
-				edit_params: event
-			}))
-		})
+		make_event_stream(this.dealWithIncomingEvents)
+	}
+	dealWithIncomingEvents = (event: IncommingEvents) => {
+		this.setState(state => ({
+			...state,
+			current_window: event.EditRectangle ? "AddRectangle" : "nothing",
+			edit_params: event
+		}))
 	}
 
 	RenderCorrectEditor = (selected: EditableComponent) => {
@@ -47,9 +48,9 @@ export class BasicEditor extends React.Component<{}, BasicEditorState> {
 				return <Color />
 			case "AddRectangle":
 				if (this.state.edit_params && this.state.edit_params.EditRectangle) {
-					return <Rectangle editData={this.state.edit_params.EditRectangle} />
+					return <Rectangle key={this.state.edit_params.EditRectangle.id} goToNextScreen={this.dealWithIncomingEvents} editData={this.state.edit_params.EditRectangle} />
 				} else {
-					return <Rectangle />
+					return <Rectangle goToNextScreen={this.dealWithIncomingEvents} key="No-id" />
 				}
 
 			case "nothing":

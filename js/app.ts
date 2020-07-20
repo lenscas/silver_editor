@@ -85,12 +85,12 @@ export const setup_extra_window_button = (contents: string, element: HTMLElement
 export const hello_from_second_page = () => console.log("nice?")
 
 
-export const add_event_to_queue = (e: Event) => {
+export const add_event_to_queue = async (e: Event) => {
 	const editor = get_silver_editor()
 	if (editor.internal.has_shared_memory) {
 		editor.internal.events.push(e)
 	} else {
-		fetch("event", { body: JSON.stringify(e), method: "POST" })
+		await fetch("event", { body: JSON.stringify(e), method: "POST" })
 	}
 
 }

@@ -3,7 +3,7 @@ import { BasicForm, number_validation, BasicFormProps, always } from "../compone
 import { add_event_to_queue } from "../app"
 import { v4 } from "uuid"
 import { AddRectangleEvent, EditRectangleEvent } from "../events"
-import { EditRectangle } from "../incoming_events/incoming_events"
+import { EditRectangle, IncommingEvents } from "../incoming_events/incoming_events"
 
 type Rect = {
 	color: string,
@@ -15,6 +15,7 @@ type Rect = {
 
 export type RectangleProps = {
 	editData?: EditRectangle["EditRectangle"]
+	goToNextScreen: (_: IncommingEvents) => void
 }
 
 export class Rectangle extends React.Component<RectangleProps> {
@@ -65,7 +66,9 @@ export class Rectangle extends React.Component<RectangleProps> {
 						id
 					}
 				}
-				add_event_to_queue(event)
+				add_event_to_queue(event).then(() => {
+					this.props.goToNextScreen({ EditRectangle: event.params })
+				})
 			}} />
 		</div>
 	}
