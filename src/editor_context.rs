@@ -65,17 +65,13 @@ impl EditorContext {
                         .iter()
                         .find(|(rec, _, _)| rec.contains(self.mouse_at));
                     if let Some((rec, color, id)) = rec {
-                        println!("got into the editor");
                         self.event_stream
                             .send_event(SendEvents::EditRectangle(AddRectangle {
                                 color: format!(
-                                    "#{}{}{}",
-                                    std::char::from_digit(color.r.floor() as u32, 16)
-                                        .expect("something werd happened"),
-                                    std::char::from_digit(color.g.floor() as u32, 16)
-                                        .expect("something werd happened"),
-                                    std::char::from_digit(color.b.floor() as u32, 16)
-                                        .expect("something werd happened")
+                                    "#{:X}{:X}{:X}",
+                                    (color.r * 255.).floor() as u32,
+                                    (color.g * 255.).floor() as u32,
+                                    (color.b * 255.).floor() as u32
                                 ),
                                 location: (rec.pos.x, rec.pos.y),
                                 size: (rec.size.x, rec.size.y),
