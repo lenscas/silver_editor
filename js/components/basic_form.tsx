@@ -32,6 +32,18 @@ export type BasicFormProps<T extends { [key: string]: unknown }> = {
 	on_submit: (_: Map<keyof T & string, string>) => void
 }
 
+const prettifyInputNames = (str : string) => {
+	let x =  str.split("_").map(part => {
+		if(part.length == 1){
+			return part.toUpperCase()
+		}
+		return part
+	}).join(" ")
+	x = x.charAt(0).toUpperCase() + x.slice(1)
+	return x
+
+
+}
 export class BasicForm<T extends { [key: string]: unknown }> extends React.Component<BasicFormProps<T>, BasicFormState<T>> {
 	constructor(props: BasicFormProps<T>) {
 		super(props)
@@ -65,13 +77,14 @@ export class BasicForm<T extends { [key: string]: unknown }> extends React.Compo
 							return <small className="form-text invalid-feedback">{validated}</small>
 						}
 					}
+					const visibleInputName = x.label || prettifyInputNames(x.name)
 					return <div key={x.name} className="form-group row">
-						<label className="col-md-2" htmlFor={x.name}>{x.label || x.name}</label>
+						<label className="col-md-2" htmlFor={x.name}>{visibleInputName}</label>
 						<div className="col-md-10">
 							<input
 								type={x.type}
 								className={"form-control " + valid_classname}
-								placeholder={x.label || x.name}
+								placeholder={visibleInputName}
 								value={this.state.values.get(x.name) || ""}
 								onChange={e => update_state(e.target.value)}
 							/>

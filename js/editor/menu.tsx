@@ -1,5 +1,6 @@
 import * as React from "react"
 import { EditableComponent } from "./basic_editor"
+import { SplitStringAtCamelCalse } from "../components/header"
 
 const Choice = (props: MenuProperties & { current: EditableComponent }) => {
 	const click = () => props.select_window(props.current)
@@ -10,7 +11,16 @@ const Choice = (props: MenuProperties & { current: EditableComponent }) => {
 			return "btn-dark"
 		}
 	})()
-	return <li className=""><button className={"btn btn-block " + active_class} type="button" onClick={click}>{props.current}</button></li >
+	const to_display = SplitStringAtCamelCalse(props.current)
+	return <li className="">
+		<button 
+			className={"btn btn-block " + active_class} 
+			type="button" 
+			onClick={click}
+		>
+			{to_display}
+		</button>
+	</li >
 }
 
 export type MenuProperties = {

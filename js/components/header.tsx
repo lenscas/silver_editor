@@ -64,11 +64,20 @@ export class Header extends React.Component<HeaderProps, HeaderState> {
 		return <nav className="navbar navbar-expand-lg navbar-dark bg-dark">{this.render_options()}</nav>
 	}
 }
+
+export const SplitStringAtCamelCalse = (str : string) => {
+	const str_split = str.split(/(?=[A-Z])/);
+	let new_str = str_split.shift();
+	new_str += " " + str_split.map(v => v.toLowerCase()).join(" ")
+	return new_str
+}
+
 export const RenderName = (props: { name: EditableComponent }) => {
 	if (props.name == "nothing") {
 		return <></>
 	} else {
-		return <span>{props.name}</span>
+		const name = SplitStringAtCamelCalse(props.name)
+		return <span>{name}</span>
 	}
 
 }
