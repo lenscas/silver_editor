@@ -2,6 +2,9 @@ import { render_editor } from "./editor"
 import 'bootstrap';
 import 'jquery';
 
+import { Event } from "./events"
+import { IncommingEvents } from "./incoming_events/incoming_events";
+
 export { render_editor } from "./editor"
 
 type EditorSpace = {
@@ -9,23 +12,12 @@ type EditorSpace = {
 		window?: Window | null
 		events: Event[]
 		has_shared_memory?: boolean
+		send_event? : (x: IncommingEvents) => void
 
 	}
 }
 
 type WindowWithEditor = Window & { silver_editor: EditorSpace }
-
-type Event = {
-	event_type: "color"
-	params: String
-} | {
-	event_type: "AddRectangle"
-	params: {
-		color: string,
-		location: [number, number],
-		size: [number, number]
-	}
-}
 
 declare global {
 	interface Window { silver_editor: any }
@@ -38,7 +30,7 @@ declare let silver_editor: {
 	}
 }
 
-const get_silver_editor = (): EditorSpace => {
+export const get_silver_editor = (): EditorSpace => {
 	if (silver_editor && !silver_editor.internal) {
 
 		silver_editor.internal = {
@@ -62,8 +54,8 @@ export const get_events = () => {
 
 }
 
-export const setup_extra_window_button = (contents: string, element : HTMLElement) => {
-	if(!element){
+export const setup_extra_window_button = (contents: string, element: HTMLElement) => {
+	if (!element) {
 		throw new Error("Did not get an element.")
 	}
 	const editor = get_silver_editor()
@@ -95,12 +87,12 @@ export const setup_extra_window_button = (contents: string, element : HTMLElemen
 export const hello_from_second_page = () => console.log("nice?")
 
 
-export const add_event_to_queue = (e: Event) => {
+export const add_event_to_queue = async (e: Event) => {
 	const editor = get_silver_editor()
 	if (editor.internal.has_shared_memory) {
 		editor.internal.events.push(e)
 	} else {
-		fetch("event", { body: JSON.stringify(e), method: "POST" })
+		await fetch("event", { body: JSON.stringify(e), method: "POST" })
 	}
 
 }
@@ -110,4 +102,10 @@ export const process_color_event = (e: string) => {
 		event_type: "color",
 		params: e
 	})
+}
+export const send_event = (e : IncommingEvents) => {
+	const editor = get_silver_editor()
+	if(editor.internal.send_event){
+		editor.internal.send_event(e)
+	}
 }

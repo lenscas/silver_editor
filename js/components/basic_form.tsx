@@ -20,6 +20,7 @@ export type Input<T extends { [key: string]: unknown }> = {
 	name: keyof T & string
 	type: "text" | "color" | "number"
 	validation: (_?: string) => ErrorOrSuccess
+	start_value?: string | number
 }
 type BasicFormState<T extends { [key: string]: unknown }> = {
 	values: Map<keyof T & string, string>
@@ -34,7 +35,14 @@ export type BasicFormProps<T extends { [key: string]: unknown }> = {
 export class BasicForm<T extends { [key: string]: unknown }> extends React.Component<BasicFormProps<T>, BasicFormState<T>> {
 	constructor(props: BasicFormProps<T>) {
 		super(props)
-		this.state = { values: new Map() }
+		const values = new Map()
+		this.props.inputs.forEach(input => {
+			if (input.start_value) {
+				values.set(input.name, input.start_value)
+			}
+		})
+		this.state = { values }
+
 	}
 	render() {
 		return <form>
@@ -60,7 +68,13 @@ export class BasicForm<T extends { [key: string]: unknown }> extends React.Compo
 					return <div key={x.name} className="form-group row">
 						<label className="col-md-2" htmlFor={x.name}>{x.label || x.name}</label>
 						<div className="col-md-10">
-							<input type={x.type} className={"form-control " + valid_classname} placeholder={x.label || x.name} value={this.state.values.get(x.name) || ""} onChange={e => update_state(e.target.value)} />
+							<input
+								type={x.type}
+								className={"form-control " + valid_classname}
+								placeholder={x.label || x.name}
+								value={this.state.values.get(x.name) || ""}
+								onChange={e => update_state(e.target.value)}
+							/>
 							{render_error()}
 						</div>
 					</div>
