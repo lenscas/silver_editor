@@ -4,7 +4,7 @@ import { Color } from "./color"
 import { Rectangle } from "./rectangle"
 import { Header, RenderName, PossibleTheme, default_theme } from "../components/header"
 
-import { make_event_stream } from "../incoming_events/websocket_client"
+import { make_event_stream } from "../incoming_events/event_stream"
 import { IncommingEvents } from "../incoming_events/incoming_events"
 
 export type EditableComponent = "color" | "AddRectangle" | "nothing"
