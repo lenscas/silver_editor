@@ -1,5 +1,5 @@
-use serde::{Deserialize, Serialize};
 use quicksilver::geom::Vector;
+use serde::{Deserialize, Serialize};
 /*
 #[derive(Deserialize, Serialize)]
 pub(crate) struct AddRectangle {
@@ -14,24 +14,21 @@ schemafy::schemafy!(
     "json_schemas/add_rectangle.json"
 );
 
-
 impl Into<Vector> for AddRectangleLocation {
     fn into(self) -> Vector {
-        Vector::new(self.x as f32,self.y as f32)
+        Vector::new(self.x as f32, self.y as f32)
     }
-    
 }
 impl Into<Vector> for AddRectangleLocationSize {
     fn into(self) -> Vector {
-        Vector::new(self.x as f32,self.y as f32)
+        Vector::new(self.x as f32, self.y as f32)
     }
-    
 }
 impl From<Vector> for AddRectangleLocationSize {
     fn from(a: Vector) -> Self {
         Self {
-            x : a.x as f64,
-            y : a.y as f64
+            x: a.x as f64,
+            y: a.y as f64,
         }
     }
 }
@@ -39,8 +36,8 @@ impl From<Vector> for AddRectangleLocationSize {
 impl From<Vector> for AddRectangleLocation {
     fn from(a: Vector) -> Self {
         Self {
-            x : a.x as f64,
-            y : a.y as f64
+            x: a.x as f64,
+            y: a.y as f64,
         }
     }
 }

@@ -1,7 +1,4 @@
-use super::{
-    shared_event_logic::json_value_iter_to_event_iter, Event,
-    SendEvents
-};
+use super::{shared_event_logic::json_value_iter_to_event_iter, Event, SendEvents};
 use crate::{AttachButtonAt, EditorConfig};
 use stdweb::js;
 

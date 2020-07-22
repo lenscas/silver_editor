@@ -12,16 +12,13 @@ fn main() {
         .args(["install"].iter())
         .output()
         .expect("Can't run yarn install");
-    
+
     for outgoing_ts_type in &TYPES_OUTPUT_EVENT_EDITOR {
         Command::new("yarn")
             .args(&[
                 "create-type",
                 &format!("./json_schemas/{}.json", outgoing_ts_type),
-                &format!(
-                    "./js/generated/outgoing_events/{}.d.ts",
-                    outgoing_ts_type
-                ),
+                &format!("./js/generated/outgoing_events/{}.d.ts", outgoing_ts_type),
             ])
             .output()
             .unwrap_or_else(|v| {
@@ -31,7 +28,6 @@ fn main() {
                 )
             });
     }
-
 
     Command::new("yarn")
         .args(["build"].iter())
