@@ -1,0 +1,48 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "http://example.com/product.schema.json",
+    "title": "AddRectangle",
+    "description": "The parameters for the AddRectangle event",
+    "type": "object",
+    "properties": {
+        "color": {
+            "type": "string"
+        },
+        "location": {
+            "type": "object",
+            "required": ["x","y"],
+            "additionalProperties": false,
+            "properties": {
+                "x": {
+                    "type": "number"
+                },
+                "y": {
+                    "type": "number"
+                }
+            }
+        },
+        "size": {
+            "type": "object",
+            "required": ["x","y"],
+            "additionalProperties": false,
+            "properties": {
+                "x": {
+                    "type": "number"
+                },
+                "y": {
+                    "type": "number"
+                }
+            }
+        },
+        "id": {
+            "type": "string"
+        }
+    },
+    "additionalProperties": false,
+    "required": [
+        "color",
+        "location",
+        "size",
+        "id"
+    ]
+}

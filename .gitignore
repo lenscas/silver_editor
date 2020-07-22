@@ -2,3 +2,4 @@
 Cargo.lock
 /node_modules/*
 /build/*
+/js/generated/*

@@ -1,24 +1,16 @@
+import { AddRectangle } from "./generated/outgoing_events/add_rectangle"
+
 export type ColorEvent = {
 	event_type: "color"
 	params: String
 }
 export type AddRectangleEvent = {
 	event_type: "AddRectangle"
-	params: {
-		color: string,
-		location: [number, number],
-		size: [number, number],
-		id: string
-	}
+	params: AddRectangle
 }
 export type EditRectangleEvent = {
 	event_type: "EditRectangle"
-	params: {
-		color: string,
-		location: [number, number],
-		size: [number, number],
-		id: string
-	}
+	params: AddRectangle
 }
 
 

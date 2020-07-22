@@ -73,8 +73,8 @@ impl EditorContext {
                                     (color.g * 255.).floor() as u32,
                                     (color.b * 255.).floor() as u32
                                 ),
-                                location: (rec.pos.x, rec.pos.y),
-                                size: (rec.size.x, rec.size.y),
+                                location: rec.pos.into(),
+                                size: rec.pos.into(),
                                 id: (id.clone()),
                             }));
                     }

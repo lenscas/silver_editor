@@ -34,24 +34,24 @@ export class Rectangle extends React.Component<RectangleProps> {
 					name: "length_x",
 					type: "number",
 					validation: number_validation,
-					start_value: this.props.editData?.size[0]
+					start_value: this.props.editData?.size.x
 				},
 				{
 					name: "length_y",
 					type: "number",
 					validation: number_validation,
-					start_value: this.props.editData?.size[1]
+					start_value: this.props.editData?.size.y
 				}, {
 					name: "pos_x",
 					type: "number",
 					validation: number_validation,
-					start_value: this.props.editData?.location[0]
+					start_value: this.props.editData?.location.x
 				},
 				{
 					name: "pos_y",
 					type: "number",
 					validation: number_validation,
-					start_value: this.props.editData?.location[1]
+					start_value: this.props.editData?.location.y
 				}
 			]
 			} on_submit={x => {
@@ -61,8 +61,14 @@ export class Rectangle extends React.Component<RectangleProps> {
 					event_type,
 					params: {
 						color: x.get("color") as string,
-						size: [Number(x.get("length_x")), Number(x.get("length_y"))],
-						location: [Number(x.get("pos_x")), Number(x.get("pos_y"))],
+						size: {
+							x : Number(x.get("length_x")),
+							y:  Number(x.get("length_y"))
+						},
+						location: {
+							x : Number(x.get("pos_x")),
+							y: Number(x.get("pos_y"))
+						},
 						id
 					}
 				}
