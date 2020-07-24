@@ -1,4 +1,4 @@
-import { AddRectangle } from "../generated/outgoing_events/add_rectangle"
+import { AddRectangle } from "../generated/incomming_events"
 
 
 export type EditRectangle = {

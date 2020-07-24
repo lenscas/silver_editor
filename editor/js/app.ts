@@ -2,7 +2,7 @@ import { render_editor } from "./editor"
 import 'bootstrap';
 import 'jquery';
 
-import { Event } from "./events"
+import { Event } from "./generated/incomming_events"
 import { IncommingEvents } from "./incoming_events/incoming_events";
 
 export { render_editor } from "./editor"
@@ -99,8 +99,7 @@ export const add_event_to_queue = async (e: Event) => {
 
 export const process_color_event = (e: string) => {
 	add_event_to_queue({
-		event_type: "color",
-		params: e
+		Color : e
 	})
 }
 export const send_event = (e : IncommingEvents) => {

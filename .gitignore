@@ -1,5 +1,8 @@
+/editor/target
+/editor/Cargo.lock
+/editor/node_modules/*
+/editor/build/*
+/editor/js/generated/*
+/event_types/target/*
+/*/target/*
 /target
-Cargo.lock
-/node_modules/*
-/build/*
-/js/generated/*

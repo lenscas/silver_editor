@@ -1,3 +1,7 @@
+//This example is temporarly broken.
+//I find the code to share types between rust and typescript more important than this example.
+//Once Serde support lands in a quicksilver version that both mergui and silver_animation support then I will make this work again
+
 //This code has been taken from https://github.com/lenscas/silver_animation/blob/master/examples/01_simple_linear.rs
 //it only servers as a quick way to test the editor features.
 

@@ -1,4 +1,4 @@
-use mergui::{Context, LayerId};
+//use mergui::{Context, LayerId};
 use quicksilver::{
     blinds::MouseButton,
     geom::{Rectangle, Shape, Vector},
@@ -7,22 +7,23 @@ use quicksilver::{
 };
 
 use crate::{
-    events::{event_params::AddRectangle, Event, EventStream, SendEvents},
+    events::{EventStream},
     EditorConfig,
 };
+use silver_editor_event_types::{Event,AddRectangle,SendEvents};
 pub struct EditorContext {
-    _layer: LayerId,
+    //_layer: LayerId,
     color: Color,
     event_stream: EventStream,
     rectangles: Vec<(Rectangle, Color, String)>,
     mouse_at: Vector,
 }
 impl EditorContext {
-    pub fn new(context: &mut Context, config: EditorConfig) -> Self {
-        let layer = context.add_layer();
+    pub fn new(config: EditorConfig) -> Self {
+       // let layer = context.add_layer();
 
         Self {
-            _layer: layer,
+            //_layer: layer,
             color: Color::WHITE,
             event_stream: EventStream::new(config),
             rectangles: Vec::new(),
@@ -34,13 +35,13 @@ impl EditorContext {
             match event {
                 Event::Color(color) => self.color = Color::from_hex(&color),
                 Event::AddRectangle(rec) => self.rectangles.push((
-                    Rectangle::new(rec.location.into(), rec.size.into()),
+                    rec.rectangle,
                     Color::from_hex(&rec.color),
                     rec.id,
                 )),
                 Event::EditRectangle(rec) => {
                     if let Some(x) = self.rectangles.iter_mut().find(|(_, _, id)| *id == rec.id) {
-                        x.0 = Rectangle::new(rec.location.into(), rec.size.into());
+                        x.0 = rec.rectangle.clone();
                         x.1 = Color::from_hex(&rec.color)
                     }
                 }
@@ -73,8 +74,7 @@ impl EditorContext {
                                     (color.g * 255.).floor() as u32,
                                     (color.b * 255.).floor() as u32
                                 ),
-                                location: rec.pos.into(),
-                                size: rec.pos.into(),
+                                rectangle : rec.clone(),
                                 id: (id.clone()),
                             }));
                     }
