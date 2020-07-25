@@ -71,13 +71,18 @@ export class BasicEditor extends React.Component<{}, BasicEditorState> {
 
 		})
 	}
+	new_screen = (new_screen : EditableComponent) => {
+		this.setState(state => ({
+			...state,current_window:new_screen,edit_params : undefined
+		}))
+	}
 	render() {
 		return <div className="container-fluid" style={{ maxHeight: "100vh", paddingLeft: "0px", paddingRight: "0px" }}>
 			{this.state.selected_theme.element}
 			<Header current={this.state.selected_theme.name} set_theme={(t) => this.set_theme(t)} />
 			<div className="row" style={{ height: "100vh", maxHeight: "100vh", marginRight: "0px" }}>
 				<div className="menu col-2">
-					<Menu selected={this.state.current_window} select_window={(a) => this.setState(x => ({ ...x, current_window: a }))} />
+					<Menu selected={this.state.current_window} select_window={this.new_screen} />
 				</div>
 				<div className="editor col" style={{ maxHeight: "100vh", overflow: "auto" }}>
 					<div className="card" style={{ marginTop: "15px" }}>
