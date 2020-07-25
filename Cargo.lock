@@ -1501,6 +1501,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "mergui"
+version = "0.1.0-alpha0.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8900b6c1d60b97c5e41265471e33f0779c898b5ca15a6037e57c2d47651e56b6"
+dependencies = [
+ "indexmap",
+ "quicksilver",
+ "unicode-normalization",
+]
+
+[[package]]
 name = "mime"
 version = "0.2.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1995,7 +2006,8 @@ checksum = "a1d01941d82fa2ab50be1e79e6714289dd7cde78eba4c074bc5a4374f650dfe0"
 [[package]]
 name = "quicksilver"
 version = "0.4.0-alpha0.5"
-source = "git+https://github.com/ryanisaacg/quicksilver#703f292061f6b56c77ea49810821da8aef00e616"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "eb205a4429c2ca003455a9fa3edabd570cc6bdb136ff63cb364dc591564b8a33"
 dependencies = [
  "blinds",
  "bytemuck",
@@ -2008,7 +2020,6 @@ dependencies = [
  "mint",
  "platter",
  "rusttype 0.8.3",
- "serde 1.0.114",
  "simple_logger",
  "web_logger",
 ]
@@ -2483,15 +2494,26 @@ dependencies = [
 ]
 
 [[package]]
+name = "silver_animation"
+version = "0.1.0-alpha0.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1c6e121f81b127906cbe533047ff6798fac40ca8300783e21ae61f0940f4a164"
+dependencies = [
+ "quicksilver",
+]
+
+[[package]]
 name = "silver_editor"
 version = "0.1.0"
 dependencies = [
  "bytes",
  "futures",
+ "mergui",
  "quicksilver",
  "schemars",
  "serde 1.0.114",
  "serde_json",
+ "silver_animation",
  "silver_editor_event_types",
  "stdweb",
  "tokio",

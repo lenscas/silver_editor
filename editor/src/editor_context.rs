@@ -1,4 +1,4 @@
-//use mergui::{Context, LayerId};
+use mergui::{Context, LayerId};
 use quicksilver::{
     blinds::MouseButton,
     geom::{Rectangle, Shape, Vector},
@@ -12,18 +12,18 @@ use crate::{
 };
 use silver_editor_event_types::{Event,AddRectangle,SendEvents};
 pub struct EditorContext {
-    //_layer: LayerId,
+    _layer: LayerId,
     color: Color,
     event_stream: EventStream,
     rectangles: Vec<(Rectangle, Color, String)>,
     mouse_at: Vector,
 }
 impl EditorContext {
-    pub fn new(config: EditorConfig) -> Self {
-       // let layer = context.add_layer();
+    pub fn new(context : &mut Context,config: EditorConfig) -> Self {
+       let layer = context.add_layer();
 
         Self {
-            //_layer: layer,
+            _layer: layer,
             color: Color::WHITE,
             event_stream: EventStream::new(config),
             rectangles: Vec::new(),
