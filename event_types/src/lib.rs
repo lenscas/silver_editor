@@ -3,14 +3,14 @@ use serde::{Deserialize, Serialize};
 use schemars::{JsonSchema};
 
 #[derive(Serialize, Deserialize, JsonSchema)]
-#[serde(remote = "Vector")]
+#[serde(remote = "Vector", deny_unknown_fields)]
 struct VectorDef {
     x : f32,
     y : f32
 }
 
 #[derive(Serialize, Deserialize, JsonSchema)]
-#[serde(remote = "Rectangle")]
+#[serde(remote = "Rectangle", deny_unknown_fields)]
 struct RectangleDef {
     #[serde(with = "VectorDef")]
     pos : Vector,
@@ -19,6 +19,7 @@ struct RectangleDef {
 }
 
 #[derive(Deserialize, Serialize, JsonSchema)]
+#[serde(deny_unknown_fields)]
 pub struct AddRectangle {
     pub color: String,
     #[serde(with = "RectangleDef")]
@@ -27,6 +28,7 @@ pub struct AddRectangle {
 }
 
 #[derive(Deserialize, Serialize, JsonSchema)]
+#[serde(deny_unknown_fields)]
 ///Every event that the editor sends to the game
 pub enum Event {
     Color(String),
@@ -35,6 +37,7 @@ pub enum Event {
 }
 #[derive(Deserialize, Serialize, JsonSchema)]
 ///Every event that the game sends to the editor
+#[serde(deny_unknown_fields)]
 pub enum SendEvents {
     EditRectangle(AddRectangle),
 }
