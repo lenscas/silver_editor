@@ -1,5 +1,5 @@
 use schemars::schema_for;
-use silver_editor_event_types::Event;
+use silver_editor_event_types::{SendEvents, Event};
 use std::io::Write;
 use std::process::{Stdio, Command};
 
@@ -14,8 +14,12 @@ fn main() {
         .output()
         .expect("Can't run yarn install");
 
-    let outgoing_types = vec![(schema_for!(Event), "incomming_events")];
-    for (outgoing_ts_type, location) in outgoing_types {
+    let types_to_generate = vec![
+        (schema_for!(Event), "outgoing_events"),
+        (schema_for!(SendEvents), "incomming_events")
+    ];
+
+    for (type_to_generate, location) in types_to_generate {
         let x = Command::new("yarn")    
         .args(&[
                 "create-type",
@@ -28,7 +32,7 @@ fn main() {
         match x.stdin {
             Some(mut x) => x
                 .write_all(
-                    &serde_json::to_vec(&outgoing_ts_type)
+                    &serde_json::to_vec(&type_to_generate)
                         .expect("Could not deserialize generatedjson scheme"),
                 )
                 .expect("Could not write to ts type generation command"),

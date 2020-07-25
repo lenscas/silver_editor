@@ -4,15 +4,15 @@ import { Color } from "./color"
 import { Rectangle } from "./rectangle"
 import { Header, RenderName, PossibleTheme, default_theme } from "../components/header"
 
-import { make_event_stream } from "../incoming_events/event_stream"
-import { IncommingEvents } from "../incoming_events/incoming_events"
+import { make_event_stream } from "../event_stream"
+import { SendEvents } from "../generated/incomming_events"
 
 export type EditableComponent = "color" | "AddRectangle" | "nothing"
 
 type BasicEditorState = {
 	current_window: EditableComponent
 	selected_theme: PossibleTheme
-	edit_params?: IncommingEvents
+	edit_params?: SendEvents
 }
 
 export class BasicEditor extends React.Component<{}, BasicEditorState> {
@@ -34,7 +34,7 @@ export class BasicEditor extends React.Component<{}, BasicEditorState> {
 		}
 		make_event_stream(this.dealWithIncomingEvents)
 	}
-	dealWithIncomingEvents = (event: IncommingEvents) => {
+	dealWithIncomingEvents = (event: SendEvents) => {
 		this.setState(state => ({
 			...state,
 			current_window: event.EditRectangle ? "AddRectangle" : "nothing",

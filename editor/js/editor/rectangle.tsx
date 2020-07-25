@@ -1,9 +1,9 @@
 import * as React from "react"
-import { BasicForm, number_validation, BasicFormProps, always } from "../components/basic_form"
+import { BasicForm, number_validation, always } from "../components/basic_form"
 import { add_event_to_queue } from "../app"
 import { v4 } from "uuid"
-import { Event, Rectangle as Rec, AddRectangle } from "../generated/incomming_events"
-import { EditRectangle, IncommingEvents  } from "../incoming_events/incoming_events"
+import { Event, Rectangle as Rec, AddRectangle } from "../generated/outgoing_events"
+import {SendEvents  } from "../generated/incomming_events"
 
 type Rect = {
 	color: string,
@@ -14,8 +14,8 @@ type Rect = {
 }
 
 export type RectangleProps = {
-	editData?: EditRectangle["EditRectangle"]
-	goToNextScreen: (_: IncommingEvents) => void
+	editData?: AddRectangle,
+	goToNextScreen: (_: SendEvents) => void
 }
 
 export class Rectangle extends React.Component<RectangleProps> {

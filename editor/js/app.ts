@@ -2,8 +2,8 @@ import { render_editor } from "./editor"
 import 'bootstrap';
 import 'jquery';
 
-import { Event } from "./generated/incomming_events"
-import { IncommingEvents } from "./incoming_events/incoming_events";
+import { Event } from "./generated/outgoing_events"
+import { SendEvents } from "./generated/incomming_events";
 
 export { render_editor } from "./editor"
 
@@ -12,7 +12,7 @@ type EditorSpace = {
 		window?: Window | null
 		events: Event[]
 		has_shared_memory?: boolean
-		send_event? : (x: IncommingEvents) => void
+		send_event? : (x: SendEvents) => void
 
 	}
 }
@@ -102,7 +102,7 @@ export const process_color_event = (e: string) => {
 		Color : e
 	})
 }
-export const send_event = (e : IncommingEvents) => {
+export const send_event = (e : SendEvents) => {
 	const editor = get_silver_editor()
 	if(editor.internal.send_event){
 		editor.internal.send_event(e)
