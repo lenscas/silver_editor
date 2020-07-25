@@ -1,7 +1,7 @@
 use schemars::schema_for;
-use silver_editor_event_types::{SendEvents, Event};
+use silver_editor_event_types::{Event, SendEvents};
 use std::io::Write;
-use std::process::{Stdio, Command};
+use std::process::{Command, Stdio};
 
 fn main() {
     // Tell Cargo that if the given file changes, to rerun this build script.
@@ -16,12 +16,12 @@ fn main() {
 
     let types_to_generate = vec![
         (schema_for!(Event), "outgoing_events"),
-        (schema_for!(SendEvents), "incomming_events")
+        (schema_for!(SendEvents), "incomming_events"),
     ];
 
     for (type_to_generate, location) in types_to_generate {
-        let x = Command::new("yarn")    
-        .args(&[
+        let x = Command::new("yarn")
+            .args(&[
                 "create-type",
                 "-o",
                 &format!("./js/generated/{}.d.ts", location),

@@ -9,4 +9,3 @@ pub(crate) use get_events_native::EventStream;
 mod get_events_web;
 #[cfg(target_arch = "wasm32")]
 pub(crate) use get_events_web::EventStream;
-

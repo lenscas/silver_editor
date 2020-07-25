@@ -1,21 +1,21 @@
-use quicksilver::geom::{Vector, Rectangle};
+use quicksilver::geom::{Rectangle, Vector};
+use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
-use schemars::{JsonSchema};
 
 #[derive(Serialize, Deserialize, JsonSchema)]
 #[serde(remote = "Vector", deny_unknown_fields)]
 struct VectorDef {
-    x : f32,
-    y : f32
+    x: f32,
+    y: f32,
 }
 
 #[derive(Serialize, Deserialize, JsonSchema)]
 #[serde(remote = "Rectangle", deny_unknown_fields)]
 struct RectangleDef {
     #[serde(with = "VectorDef")]
-    pos : Vector,
+    pos: Vector,
     #[serde(with = "VectorDef")]
-    size : Vector
+    size: Vector,
 }
 
 #[derive(Deserialize, Serialize, JsonSchema)]
@@ -23,7 +23,7 @@ struct RectangleDef {
 pub struct AddRectangle {
     pub color: String,
     #[serde(with = "RectangleDef")]
-    pub rectangle : Rectangle,
+    pub rectangle: Rectangle,
     pub id: String,
 }
 

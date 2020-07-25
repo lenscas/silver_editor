@@ -6,11 +6,8 @@ use quicksilver::{
     Graphics,
 };
 
-use crate::{
-    events::{EventStream},
-    EditorConfig,
-};
-use silver_editor_event_types::{Event,AddRectangle,SendEvents};
+use crate::{events::EventStream, EditorConfig};
+use silver_editor_event_types::{AddRectangle, Event, SendEvents};
 pub struct EditorContext {
     _layer: LayerId,
     color: Color,
@@ -19,8 +16,8 @@ pub struct EditorContext {
     mouse_at: Vector,
 }
 impl EditorContext {
-    pub fn new(context : &mut Context,config: EditorConfig) -> Self {
-       let layer = context.add_layer();
+    pub fn new(context: &mut Context, config: EditorConfig) -> Self {
+        let layer = context.add_layer();
 
         Self {
             _layer: layer,
@@ -34,11 +31,10 @@ impl EditorContext {
         for event in self.event_stream.get_events() {
             match event {
                 Event::Color(color) => self.color = Color::from_hex(&color),
-                Event::AddRectangle(rec) => self.rectangles.push((
-                    rec.rectangle,
-                    Color::from_hex(&rec.color),
-                    rec.id,
-                )),
+                Event::AddRectangle(rec) => {
+                    self.rectangles
+                        .push((rec.rectangle, Color::from_hex(&rec.color), rec.id))
+                }
                 Event::EditRectangle(rec) => {
                     if let Some(x) = self.rectangles.iter_mut().find(|(_, _, id)| *id == rec.id) {
                         x.0 = rec.rectangle.clone();
@@ -74,7 +70,7 @@ impl EditorContext {
                                     (color.g * 255.).floor() as u32,
                                     (color.b * 255.).floor() as u32
                                 ),
-                                rectangle : rec.clone(),
+                                rectangle: rec.clone(),
                                 id: (id.clone()),
                             }));
                     }

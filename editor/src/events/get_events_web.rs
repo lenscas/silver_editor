@@ -1,6 +1,6 @@
-use super::{shared_event_logic::json_value_iter_to_event_iter};
+use super::shared_event_logic::json_value_iter_to_event_iter;
 use crate::{AttachButtonAt, EditorConfig};
-use silver_editor_event_types::{SendEvents,Event};
+use silver_editor_event_types::{Event, SendEvents};
 use stdweb::js;
 
 fn get_events() -> impl Iterator<Item = Event> {

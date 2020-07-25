@@ -1,7 +1,5 @@
-use super::{
-    shared_event_logic::{json_value_iter_to_event_iter},
-};
-use silver_editor_event_types::{SendEvents,Event};
+use super::shared_event_logic::json_value_iter_to_event_iter;
+use silver_editor_event_types::{Event, SendEvents};
 
 use crate::EditorConfig;
 use bytes::Buf;
@@ -134,7 +132,7 @@ impl EventStream {
             .expect("Could not get access to the events");
         let len = res.len();
         let res: Vec<_> = res.drain(0..len).collect();
-        
+
         json_value_iter_to_event_iter(res.into_iter())
     }
     pub(crate) fn send_event(&mut self, event: SendEvents) {
