@@ -34,7 +34,7 @@ pub enum Event {
     EditRectangle(AddRectangle),
 }
 #[derive(Deserialize, Serialize, JsonSchema)]
-///Evert event that the game sends to the editor
+///Every event that the game sends to the editor
 pub enum SendEvents {
     EditRectangle(AddRectangle),
 }
