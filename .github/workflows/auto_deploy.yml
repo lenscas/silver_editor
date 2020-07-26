@@ -4,6 +4,7 @@ on:
     # Sequence of patterns matched against refs/heads
     branches:
       - master
+      - fix/fix-ci
     paths:
       - "src/**.rs"
       - "js/**.ts"
@@ -25,16 +26,24 @@ jobs:
         run: |
           sudo apt-get -qq update
           sudo apt-get install -y libudev-dev zlib1g-dev alsa libasound2-dev
-      - name: Add cargo web
-        run: cargo install cargo-web
       - name: Checkout
         uses: actions/checkout@master
+      - name: cd to folder
+        run: cd editor
+      # I don't need to rune the js commands, however I like being able to see how long it took
       - name: install js dependencies
         run: yarn install
       - name: build js
-        run: yarn build
+        run: yarn build --progress
+
+      # TODO: Look how to cache cargo web
+       - name: Add cargo web
+        run: cargo install cargo-web
+
+      # Now, time to build the rust part
       - name: build rust
         run: cargo web build --example test --release
+
       - name: Make ready for deploy
         run: |
           mkdir ./preps
