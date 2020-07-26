@@ -28,13 +28,6 @@ jobs:
           sudo apt-get install -y libudev-dev zlib1g-dev alsa libasound2-dev
       - name: Checkout
         uses: actions/checkout@v2
-      # I don't need to rune the js commands, however I like being able to see how long it took
-      - name: install js dependencies
-        run: yarn install
-        working-directory: ./editor
-      - name: build js
-        run: yarn build --progress
-        working-directory: ./editor
       # TODO: Look how to cache cargo web
       - name: Add cargo web
         run: cargo install cargo-web
