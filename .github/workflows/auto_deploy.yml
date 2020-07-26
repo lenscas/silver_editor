@@ -37,11 +37,9 @@ jobs:
         working-directory: ./editor
       - name: Make ready for deploy
         run: |
-          ls ./editor
-          ls
           mkdir ./editor/preps
           cp -a ./editor/static/. ./preps/
-          cp -a ./editor/target/wasm32-unknown-unknown/release/examples/. ./preps/
+          cp -a ./target/wasm32-unknown-unknown/release/examples/. ./preps/
       - name: deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
