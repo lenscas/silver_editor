@@ -4,7 +4,6 @@ on:
     # Sequence of patterns matched against refs/heads
     branches:
       - master
-      - fix/fix-ci
     paths:
       - "*/src/**.rs"
       - "editor/js/**.ts"
