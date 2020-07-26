@@ -5,13 +5,13 @@ on:
     branches:
       - master
     paths:
-      - "src/**.rs"
-      - "js/**.ts"
-      - "js/**.tsx"
+      - "*/src/**.rs"
+      - "editor/js/**.ts"
+      - "editor/js/**.tsx"
       - ".github/workflows/auto_deploy.yml"
-      - "static/*"
-      - "examples/*"
-      - "yarn.lock"
+      - "editor/static/*"
+      - "editor/examples/*"
+      - "editor/yarn.lock"
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -25,23 +25,22 @@ jobs:
         run: |
           sudo apt-get -qq update
           sudo apt-get install -y libudev-dev zlib1g-dev alsa libasound2-dev
+      - name: Checkout
+        uses: actions/checkout@v2
+      # TODO: Look how to cache cargo web
       - name: Add cargo web
         run: cargo install cargo-web
-      - name: Checkout
-        uses: actions/checkout@master
-      - name: install js dependencies
-        run: yarn install
-      - name: build js
-        run: yarn build
+      # Now, time to build the rust part
       - name: build rust
         run: cargo web build --example test --release
+        working-directory: ./editor
       - name: Make ready for deploy
         run: |
-          mkdir ./preps
-          cp -a ./static/. ./preps/
+          mkdir ./editor/preps
+          cp -a ./editor/static/. ./preps/
           cp -a ./target/wasm32-unknown-unknown/release/examples/. ./preps/
       - name: deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./preps
+          publish_dir: ./editor/preps

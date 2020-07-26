@@ -1,4 +1,4 @@
-use super::shared_event_logic::json_value_iter_to_event_iter;
+use super::shared_event_logic::{JS_SCRIPT, json_value_iter_to_event_iter};
 use silver_editor_event_types::{Event, SendEvents};
 
 use crate::EditorConfig;
@@ -16,6 +16,7 @@ use warp::{reply::html, ws::Message, Filter};
 
 use futures::{FutureExt, StreamExt};
 
+static JS_MAP : &str = include_str!(concat!(env!("OUT_DIR"),"/app.js.map"));
 pub(crate) struct EventStream {
     _warp_thread: JoinHandle<()>,
     events: Arc<Mutex<Vec<Value>>>,
@@ -47,12 +48,12 @@ impl EventStream {
                 warp::serve(
                     warp::any()
                         .and(warp::path("editor.js").and(warp::get()).map(|| {
-                            let output = include_str!("../../build/app.js");
+                            let output = JS_SCRIPT;
                             output
                         }))
                         .or(warp::path("app.js.map")
                             .and(warp::get())
-                            .map(|| include_str!("../../build/app.js.map")))
+                            .map(|| JS_MAP))
                         .or(warp::path("ws")
                             .and(warp::ws())
                             .map(move |ws: warp::ws::Ws| {
@@ -136,6 +137,7 @@ impl EventStream {
         json_value_iter_to_event_iter(res.into_iter())
     }
     pub(crate) fn send_event(&mut self, event: SendEvents) {
+        println!("time to send the events");
         let mut basic_rt = runtime::Builder::new()
             .basic_scheduler()
             .build()
@@ -144,9 +146,10 @@ impl EventStream {
             let mut handlers = self.editor_handles.write().await;
             for handle in handlers.iter_mut() {
                 //TODO handle this error in a good way
-                let _ = handle.send(Ok(Message::text(
+                let res = handle.send(Ok(Message::text(
                     serde_json::to_string(&event).expect("Could not serialize event"),
                 )));
+                let _ = dbg!(res);
                 println!("got here?")
             }
         })
