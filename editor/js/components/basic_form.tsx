@@ -56,7 +56,18 @@ export class BasicForm<
   }
   render() {
     return (
-      <form>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (
+            this.props.inputs.every((x) =>
+              x.validation(this.state.values.get(x.name))
+            )
+          ) {
+            this.props.on_submit(this.state.values);
+          }
+        }}
+      >
         {this.props.inputs.map((x) => {
           const update_state = (e: string) => {
             this.setState((old_state) => {
@@ -101,21 +112,7 @@ export class BasicForm<
             </div>
           );
         })}
-        <button
-          className="btn btn-success"
-          onClick={(e) => {
-            e.preventDefault();
-            if (
-              this.props.inputs.every((x) =>
-                x.validation(this.state.values.get(x.name))
-              )
-            ) {
-              this.props.on_submit(this.state.values);
-            }
-          }}
-        >
-          Submit
-        </button>
+        <button className="btn btn-success">Submit</button>
       </form>
     );
   }
