@@ -35,15 +35,12 @@ jobs:
         run: yarn install
       - name: build js
         run: yarn build --progress
-
       # TODO: Look how to cache cargo web
-       - name: Add cargo web
+      - name: Add cargo web
         run: cargo install cargo-web
-
       # Now, time to build the rust part
       - name: build rust
         run: cargo web build --example test --release
-
       - name: Make ready for deploy
         run: |
           mkdir ./preps
