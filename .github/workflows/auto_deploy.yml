@@ -6,13 +6,13 @@ on:
       - master
       - fix/fix-ci
     paths:
-      - "src/**.rs"
-      - "js/**.ts"
-      - "js/**.tsx"
+      - "*/src/**.rs"
+      - "editor/js/**.ts"
+      - "editor/js/**.tsx"
       - ".github/workflows/auto_deploy.yml"
-      - "static/*"
-      - "examples/*"
-      - "yarn.lock"
+      - "editor/static/*"
+      - "editor/examples/*"
+      - "editor/yarn.lock"
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
