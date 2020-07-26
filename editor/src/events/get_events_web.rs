@@ -1,7 +1,8 @@
-use super::shared_event_logic::json_value_iter_to_event_iter;
+use super::shared_event_logic::{JS_SCRIPT, json_value_iter_to_event_iter};
 use crate::{AttachButtonAt, EditorConfig};
 use silver_editor_event_types::{Event, SendEvents};
 use stdweb::js;
+
 
 fn get_events() -> impl Iterator<Item = Event> {
     let x = js! {
@@ -17,11 +18,16 @@ fn get_events() -> impl Iterator<Item = Event> {
 
 pub(crate) fn inject_button_to_editor(config: EditorConfig) {
     let content = include_str!("../../static/editor_wasm.html");
+    let script = JS_SCRIPT.clone();
     let (element, id) = match config.web_config.button_loc {
         AttachButtonAt::Id(x) => (None, Some(x)),
         AttachButtonAt::Element(x) => (Some(x), None),
     };
     js! {
+        let script_tag = document.createElement("script");
+        script_tag.type="text/javascript";
+        script_tag.text = @{script};
+        document.body.appendChild(script_tag);
         let el;
         if(@{element.clone()}){
             el = document.getElementsByTagName(@{element})[0]

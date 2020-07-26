@@ -1,3 +1,0 @@
-default-target = "wasm32-unknown-unknown"
-
-prepend-js = "build/app.js"

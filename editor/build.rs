@@ -1,7 +1,6 @@
 use schemars::schema_for;
 use silver_editor_event_types::{Event, SendEvents};
-use std::io::Write;
-use std::process::{Command, Stdio};
+use std::{io::Write, env, process::{Command, Stdio}};
 
 fn main() {
     // Tell Cargo that if the given file changes, to rerun this build script.
@@ -19,6 +18,8 @@ fn main() {
         (schema_for!(SendEvents), "incomming_events"),
     ];
 
+
+    
     for (type_to_generate, location) in types_to_generate {
         let x = Command::new("yarn")
             .args(&[
@@ -39,9 +40,9 @@ fn main() {
             None => panic!("Command to generate ts type has no stdin"),
         }
     }
-
+    let out_dir = env::var_os("OUT_DIR").unwrap();
     Command::new("yarn")
-        .args(["build"].iter())
+        .args(["build", "--output-path", &out_dir.into_string().expect("Couldn't turn the path into string")].iter())
         .output()
         .expect("can't run yarn build");
 }
