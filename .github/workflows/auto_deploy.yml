@@ -28,11 +28,10 @@ jobs:
           sudo apt-get install -y libudev-dev zlib1g-dev alsa libasound2-dev
       - name: Checkout
         uses: actions/checkout@master
-      - name: cd to folder
-        run: cd editor
       # I don't need to rune the js commands, however I like being able to see how long it took
       - name: install js dependencies
         run: yarn install
+        working-directory: ./editor
       - name: build js
         run: yarn build --progress
       # TODO: Look how to cache cargo web
@@ -41,13 +40,15 @@ jobs:
       # Now, time to build the rust part
       - name: build rust
         run: cargo web build --example test --release
+        working-directory: ./editor
       - name: Make ready for deploy
         run: |
           mkdir ./preps
           cp -a ./static/. ./preps/
           cp -a ./target/wasm32-unknown-unknown/release/examples/. ./preps/
+        working-directory: ./editor
       - name: deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./preps
+          publish_dir: ./editor/preps
