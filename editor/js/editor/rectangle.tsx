@@ -1,5 +1,5 @@
 import * as React from "react";
-import { BasicForm, number_validation, always } from "../components/basic_form";
+import { BasicForm} from "../components/basic_form";
 import { add_event_to_queue } from "../app";
 import { v4 } from "uuid";
 import {
@@ -32,31 +32,32 @@ export class Rectangle extends React.Component<RectangleProps> {
             {
               name: "color",
               type: "color",
-              validation: always,
               start_value: this.props.editData?.color,
             },
             {
               name: "length_x",
               type: "number",
-              validation: number_validation,
               start_value: this.props.editData?.rectangle.size.x,
+              validation : {
+                min : 0
+              }
             },
             {
               name: "length_y",
               type: "number",
-              validation: number_validation,
               start_value: this.props.editData?.rectangle.size.y,
+              validation : {
+                min : 0
+              }
             },
             {
               name: "pos_x",
               type: "number",
-              validation: number_validation,
               start_value: this.props.editData?.rectangle.pos.x,
             },
             {
               name: "pos_y",
               type: "number",
-              validation: number_validation,
               start_value: this.props.editData?.rectangle.pos.y,
             },
           ]}

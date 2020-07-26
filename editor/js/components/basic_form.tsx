@@ -2,30 +2,56 @@ import * as React from "react";
 
 export type ErrorOrSuccess = true | string;
 
-export const always = (_?: string): ErrorOrSuccess => true;
-export const number_validation = (x?: string) => {
-  if (isNaN(Number(x))) {
-    return "field is not a number";
-  } else {
-    return true;
-  }
+export type form_type = (
+  | {
+      type: "number";
+      validation?: {
+        min?: number;
+      };
+    }
+  | {
+      type: "color";
+      validation?: {};
+    }
+  | {
+      type: "text";
+      validation?: {
+        pattern?: string;
+      };
+    }
+) & {
+  validation?: {
+    required?: boolean;
+    custom?: (
+      value: string
+    ) => Promise<{ state: "valid" } | { state: "invalid"; message: string }>;
+  };
 };
 
 export type Input<T extends { [key: string]: unknown }> = {
   label?: string;
   name: keyof T & string;
-  type: "text" | "color" | "number";
-  validation: (_?: string) => ErrorOrSuccess;
   start_value?: string | number;
-};
+} & form_type;
+
 type BasicFormState<T extends { [key: string]: unknown }> = {
-  values: Map<keyof T & string, string>;
+  values: Map<
+    keyof T,
+    | {
+        state: "running";
+        cancel: () => void;
+      }
+    | {
+        state: "valid";
+      }
+    | { state: "invalid"; message: string }
+  >;
 };
 
 export type BasicFormProps<T extends { [key: string]: unknown }> = {
   inputs: Array<Input<T>>;
 
-  on_submit: (_: Map<keyof T & string, string>) => void;
+  on_submit: (_: Map<keyof T, string>) => void;
 };
 
 const prettifyInputNames = (str: string) => {
@@ -59,13 +85,13 @@ export class BasicForm<
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          if (
-            this.props.inputs.every((x) =>
-              x.validation(this.state.values.get(x.name))
-            )
-          ) {
-            this.props.on_submit(this.state.values);
-          }
+          const as_map = new Map<keyof T, string>();
+          const data = new FormData(e.target as HTMLFormElement);
+          
+          data.forEach((v, k) => {
+            as_map.set(k, v as string);
+          });
+          this.props.on_submit(as_map);
         }}
       >
         {this.props.inputs.map((x) => {
@@ -77,23 +103,49 @@ export class BasicForm<
               return { ...old_state, values: new_map };
             });
           };
-          const valid_classname =
-            x.validation(this.state.values.get(x.name)) === true
-              ? "is-valid"
-              : "is-invalid";
-          const render_error = () => {
-            const validated = x.validation(this.state.values.get(x.name));
-            if (validated === true) {
-              return <></>;
-            } else {
-              return (
-                <small className="form-text invalid-feedback">
-                  {validated}
-                </small>
-              );
-            }
-          };
           const visibleInputName = x.label || prettifyInputNames(x.name);
+          const validation : form_type["validation"] = { ...x.validation };
+          validation.required =
+            validation.required || validation.required == undefined;
+          const custom_validation_given  = validation.custom || (async ()=> ({state : "valid"}));
+          const custom_validation = (
+            e: React.ChangeEvent<HTMLInputElement>
+          ) => {
+            e.persist()
+            const name = e.target.name
+            const state = this.state.values.get(name);
+            const current_value = e.target.value;
+            const target = e.target;
+
+            if (state?.state == "running") {
+              state.cancel();
+            }
+            let shouldCancel = false;
+            this.setState(state => {
+              state.values.set(e.target.name, {
+                state: "running",
+                cancel: () => {
+                  shouldCancel = true;
+                },
+              });
+              return state
+            },async ()=>{
+              const res = await custom_validation_given(current_value)
+              if(!shouldCancel){
+                if(res.state == "invalid"){
+                  target.setCustomValidity(res.message)
+                } else {
+                  target.setCustomValidity("")
+                }
+                this.setState(state => {
+                  state.values.set(name,res)
+                  return state
+                })
+              }
+            })
+
+          };
+          validation.custom = undefined;
           return (
             <div key={x.name} className="form-group row">
               <label className="col-md-2" htmlFor={x.name}>
@@ -102,12 +154,15 @@ export class BasicForm<
               <div className="col-md-10">
                 <input
                   type={x.type}
-                  className={"form-control " + valid_classname}
+                  name={x.name}
+                  id={x.name}
+                  className={"form-control"}
                   placeholder={visibleInputName}
-                  value={this.state.values.get(x.name) || ""}
                   onChange={(e) => update_state(e.target.value)}
+                  defaultValue = {x.start_value}
+                  {...validation}
+                  onInput = {custom_validation}
                 />
-                {render_error()}
               </div>
             </div>
           );
