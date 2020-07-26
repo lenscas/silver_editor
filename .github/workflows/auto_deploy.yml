@@ -34,6 +34,7 @@ jobs:
         working-directory: ./editor
       - name: build js
         run: yarn build --progress
+        working-directory: ./editor
       # TODO: Look how to cache cargo web
       - name: Add cargo web
         run: cargo install cargo-web
