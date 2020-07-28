@@ -28,9 +28,9 @@ export type form_type = (
   };
 };
 
-export type Input<T extends { [key: string]: unknown }> = {
+export type Input<T extends { [key: string]: any }> = {
   label?: string;
-  name: keyof T & string;
+  name: keyof T;
   start_value?: string | number;
 } & form_type;
 
@@ -48,10 +48,14 @@ type BasicFormState<T extends { [key: string]: unknown }> = {
   >;
 };
 
-export type BasicFormProps<T extends { [key: string]: unknown }> = {
+export type BasicFormProps<T> = {
   inputs: Array<Input<T>>;
 
-  on_submit: (_: Map<keyof T, string>) => void;
+  on_submit: (_: T) => void;
+  trans: <Keys extends keyof T>(
+    key: Keys,
+    value: FormDataEntryValue
+  ) => T[Keys];
 };
 
 const prettifyInputNames = (str: string) => {
@@ -85,13 +89,13 @@ export class BasicForm<
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          const as_map = new Map<keyof T, string>();
+          const as_obj: Partial<T> = {};
           const data = new FormData(e.target as HTMLFormElement);
-          
+
           data.forEach((v, k) => {
-            as_map.set(k, v as string);
+            as_obj[k as keyof T] = this.props.trans((k as any) as keyof T, v);
           });
-          this.props.on_submit(as_map);
+          this.props.on_submit(as_obj as T);
         }}
       >
         {this.props.inputs.map((x) => {
@@ -103,16 +107,18 @@ export class BasicForm<
               return { ...old_state, values: new_map };
             });
           };
-          const visibleInputName = x.label || prettifyInputNames(x.name);
-          const validation : form_type["validation"] = { ...x.validation };
+          const visibleInputName =
+            x.label || prettifyInputNames(x.name.toString());
+          const validation: form_type["validation"] = { ...x.validation };
           validation.required =
             validation.required || validation.required == undefined;
-          const custom_validation_given  = validation.custom || (async ()=> ({state : "valid"}));
+          const custom_validation_given =
+            validation.custom || (async () => ({ state: "valid" }));
           const custom_validation = (
             e: React.ChangeEvent<HTMLInputElement>
           ) => {
-            e.persist()
-            const name = e.target.name
+            e.persist();
+            const name = e.target.name;
             const state = this.state.values.get(name);
             const current_value = e.target.value;
             const target = e.target;
@@ -121,47 +127,49 @@ export class BasicForm<
               state.cancel();
             }
             let shouldCancel = false;
-            this.setState(state => {
-              state.values.set(e.target.name, {
-                state: "running",
-                cancel: () => {
-                  shouldCancel = true;
-                },
-              });
-              return state
-            },async ()=>{
-              const res = await custom_validation_given(current_value)
-              if(!shouldCancel){
-                if(res.state == "invalid"){
-                  target.setCustomValidity(res.message)
-                } else {
-                  target.setCustomValidity("")
+            this.setState(
+              (state) => {
+                state.values.set(e.target.name, {
+                  state: "running",
+                  cancel: () => {
+                    shouldCancel = true;
+                  },
+                });
+                return state;
+              },
+              async () => {
+                const res = await custom_validation_given(current_value);
+                if (!shouldCancel) {
+                  if (res.state == "invalid") {
+                    target.setCustomValidity(res.message);
+                  } else {
+                    target.setCustomValidity("");
+                  }
+                  this.setState((state) => {
+                    state.values.set(name, res);
+                    return state;
+                  });
                 }
-                this.setState(state => {
-                  state.values.set(name,res)
-                  return state
-                })
               }
-            })
-
+            );
           };
           validation.custom = undefined;
           return (
-            <div key={x.name} className="form-group row">
-              <label className="col-md-2" htmlFor={x.name}>
+            <div key={x.name.toString()} className="form-group row">
+              <label className="col-md-2" htmlFor={x.name.toString()}>
                 {visibleInputName}
               </label>
               <div className="col-md-10">
                 <input
                   type={x.type}
-                  name={x.name}
-                  id={x.name}
+                  name={x.name.toString()}
+                  id={x.name.toString()}
                   className={"form-control"}
                   placeholder={visibleInputName}
                   onChange={(e) => update_state(e.target.value)}
-                  defaultValue = {x.start_value}
+                  defaultValue={x.start_value}
                   {...validation}
-                  onInput = {custom_validation}
+                  onInput={custom_validation}
                 />
               </div>
             </div>

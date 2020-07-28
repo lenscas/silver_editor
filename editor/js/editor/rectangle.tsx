@@ -1,5 +1,5 @@
 import * as React from "react";
-import { BasicForm} from "../components/basic_form";
+import { BasicForm } from "../components/basic_form";
 import { add_event_to_queue } from "../app";
 import { v4 } from "uuid";
 import {
@@ -38,17 +38,17 @@ export class Rectangle extends React.Component<RectangleProps> {
               name: "length_x",
               type: "number",
               start_value: this.props.editData?.rectangle.size.x,
-              validation : {
-                min : 0
-              }
+              validation: {
+                min: 0,
+              },
             },
             {
               name: "length_y",
               type: "number",
               start_value: this.props.editData?.rectangle.size.y,
-              validation : {
-                min : 0
-              }
+              validation: {
+                min: 0,
+              },
             },
             {
               name: "pos_x",
@@ -61,16 +61,32 @@ export class Rectangle extends React.Component<RectangleProps> {
               start_value: this.props.editData?.rectangle.pos.y,
             },
           ]}
+          trans={(k, v) => {
+            switch (k) {
+              case "color":
+                return v.toString();
+              case "length_x":
+                return Number(v);
+              case "length_y":
+                return Number(v);
+              case "pos_x":
+                return Number(v);
+              case "pos_y":
+                return Number(v);
+              default:
+                return v as any;
+            }
+          }}
           on_submit={(x) => {
             const id = this.props.editData?.id || v4();
             const rectangle: Rec = {
-              pos: { x: Number(x.get("pos_x")), y: Number(x.get("pos_y")) },
+              pos: { x: x.pos_x, y: x.pos_y },
               size: {
-                x: Number(x.get("length_x")),
-                y: Number(x.get("length_y")),
+                x: x.length_x,
+                y: x.length_y,
               },
             };
-            const color = x.get("color") as string;
+            const color = x.color;
             const params: AddRectangle = {
               color,
               id,
