@@ -1,18 +1,21 @@
 use mergui::{Context, LayerId};
 use quicksilver::{
     blinds::MouseButton,
-    geom::{Rectangle, Shape, Vector},
+    geom::{Vector},
     graphics::Color,
     Graphics,
 };
 
 use crate::{events::EventStream, EditorConfig};
-use silver_editor_event_types::{AddRectangle, Event, SendEvents};
+use silver_editor_event_types::{
+    simple_drawable::{IntoSimpleDrawable, SimpleDrawable},
+    Event,
+};
 pub struct EditorContext {
     _layer: LayerId,
     color: Color,
     event_stream: EventStream,
-    rectangles: Vec<(Rectangle, Color, String)>,
+    simple_shapes: Vec<(Box<dyn SimpleDrawable + 'static>, String)>,
     mouse_at: Vector,
 }
 impl EditorContext {
@@ -23,7 +26,7 @@ impl EditorContext {
             _layer: layer,
             color: Color::WHITE,
             event_stream: EventStream::new(config),
-            rectangles: Vec::new(),
+            simple_shapes: Vec::new(),
             mouse_at: Vector::new(0., 0.),
         }
     }
@@ -31,24 +34,21 @@ impl EditorContext {
         for event in self.event_stream.get_events() {
             match event {
                 Event::Color(color) => self.color = Color::from_hex(&color),
-                Event::AddRectangle(rec) => {
-                    self.rectangles
-                        .push((rec.rectangle, Color::from_hex(&rec.color), rec.id))
-                }
+                Event::AddRectangle(rec) => self.simple_shapes.push(rec.into_simple_drawable()),
                 Event::EditRectangle(rec) => {
-                    if let Some(x) = self.rectangles.iter_mut().find(|(_, _, id)| *id == rec.id) {
-                        x.0 = rec.rectangle.clone();
-                        x.1 = Color::from_hex(&rec.color)
+                    if let Some(x) = self.simple_shapes.iter_mut().find(|(_, id)| *id == rec.id) {
+                        *x = rec.into_simple_drawable()
                     }
                 }
             }
         }
     }
-    pub fn draw(&self, gfx: &mut Graphics) {
+    pub fn draw(&mut self, gfx: &mut Graphics) -> quicksilver::Result<()> {
         gfx.clear(self.color);
-        for (rec, color, _) in &self.rectangles {
-            gfx.fill_rect(rec, *color);
+        for (shape, _) in &mut self.simple_shapes {
+            shape.draw(gfx)?;
         }
+        Ok(())
     }
     pub fn event(&mut self, event: &quicksilver::input::Event) {
         match event {
@@ -57,22 +57,19 @@ impl EditorContext {
             }
             quicksilver::input::Event::PointerInput(x) => {
                 if x.is_down() && x.button() == MouseButton::Left {
+                    let mouse_at = self.mouse_at;
                     let rec = self
-                        .rectangles
-                        .iter()
-                        .find(|(rec, _, _)| rec.contains(self.mouse_at));
-                    if let Some((rec, color, id)) = rec {
-                        self.event_stream
-                            .send_event(SendEvents::EditRectangle(AddRectangle {
-                                color: format!(
-                                    "#{:X}{:X}{:X}",
-                                    (color.r * 255.).floor() as u32,
-                                    (color.g * 255.).floor() as u32,
-                                    (color.b * 255.).floor() as u32
-                                ),
-                                rectangle: rec.clone(),
-                                id: (id.clone()),
-                            }));
+                        .simple_shapes
+                        .iter_mut()
+                        .map(|(shape, id)| (shape.contains(mouse_at), shape, id))
+                        .find(|(is_inside, _, _)| *is_inside)
+                        .map(|(_, shape, id)| (shape, id));
+                    if let Some((shape, id)) = rec {
+                        self.event_stream.send_event(
+                            shape
+                                .as_event(id.clone())
+                                .expect("could not turn shape into event"),
+                        )
                     }
                 }
             }

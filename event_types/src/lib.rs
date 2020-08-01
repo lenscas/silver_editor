@@ -1,6 +1,10 @@
-use quicksilver::geom::{Rectangle, Vector};
+use quicksilver::{
+    geom::{Rectangle, Vector},
+    graphics::Color,
+};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
+use simple_drawable::IntoSimpleDrawable;
 
 #[derive(Serialize, Deserialize, JsonSchema)]
 #[serde(remote = "Vector", deny_unknown_fields)]
@@ -27,6 +31,18 @@ pub struct AddRectangle {
     pub id: String,
 }
 
+impl IntoSimpleDrawable for AddRectangle {
+    fn into_simple_drawable(self) -> (Box<dyn simple_drawable::SimpleDrawable>, String) {
+        (
+            Box::new(crate::simple_drawable::Rectangle {
+                rec: self.rectangle,
+                color: Color::from_hex(&self.color),
+            }),
+            self.id,
+        )
+    }
+}
+
 #[derive(Deserialize, Serialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
 ///Every event that the editor sends to the game
@@ -41,3 +57,5 @@ pub enum Event {
 pub enum SendEvents {
     EditRectangle(AddRectangle),
 }
+
+pub mod simple_drawable;

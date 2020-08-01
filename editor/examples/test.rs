@@ -58,7 +58,7 @@ async fn app(window: Window, mut gfx: Graphics, mut inputs: Input) -> Result<()>
             edit_context.event(&e);
         }
         edit_context.update();
-        edit_context.draw(&mut gfx);
+        edit_context.draw(&mut gfx)?;
         animation.draw(&mut gfx, location)?;
         gfx.present(&window)?;
     }

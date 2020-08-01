@@ -2527,6 +2527,7 @@ dependencies = [
  "quicksilver",
  "schemars",
  "serde 1.0.114",
+ "serde_json",
 ]
 
 [[package]]
