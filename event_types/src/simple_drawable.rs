@@ -1,7 +1,7 @@
 use quicksilver::{geom::Vector, Graphics, graphics::Color};
 
 mod rectangle;
-pub use rectangle::Rectangle;
+pub(crate) use rectangle::Rectangle;
 
 ///This trait is used to turn the events from the editor into something that can actually be drawn
 ///It is made public in case the editor get plugin support.

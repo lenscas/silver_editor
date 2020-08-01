@@ -1,9 +1,7 @@
 use super::{color_to_hex, SimpleDrawable};
 use crate::{SendEvents::EditRectangle, AddRectangle};
 use quicksilver::{geom::Shape, graphics::Color};
-///A rectangle that can be drawn by the editor context
-///It only exists for the editor and thus you probably don't want/need to use it.
-pub struct Rectangle {
+pub(crate) struct Rectangle {
     pub(crate) rec: quicksilver::geom::Rectangle,
     pub(crate) color: Color,
 }
