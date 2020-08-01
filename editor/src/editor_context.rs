@@ -9,7 +9,7 @@ use quicksilver::{
 use crate::{events::EventStream, EditorConfig};
 use silver_editor_event_types::{
     simple_drawable::{IntoSimpleDrawable, SimpleDrawable},
-    Event,
+    events::Event,
 };
 pub struct EditorContext {
     _layer: LayerId,

@@ -1,5 +1,5 @@
 use schemars::schema_for;
-use silver_editor_event_types::{Event, SendEvents};
+use silver_editor_event_types::events::{Event, SendEvents};
 use std::{io::Write, env, process::{Command, Stdio}};
 
 fn main() {
