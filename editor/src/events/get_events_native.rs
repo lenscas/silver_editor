@@ -115,7 +115,7 @@ impl EventStream {
                                         "awesome"
                                     },
                                 ),
-                            ))),
+                            ))).or(warp::fs::dir("static")),
                 )
                 .run((config.native_config.address, config.native_config.port)),
             );

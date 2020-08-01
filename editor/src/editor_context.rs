@@ -30,18 +30,25 @@ impl EditorContext {
             mouse_at: Vector::new(0., 0.),
         }
     }
-    pub fn update(&mut self) {
+    pub async fn update(&mut self, gfx : &mut Graphics) -> quicksilver::Result<()> {
         for event in self.event_stream.get_events() {
             match event {
                 Event::Color(color) => self.color = Color::from_hex(&color),
-                Event::AddRectangle(rec) => self.simple_shapes.push(rec.into_simple_drawable()),
+                Event::AddRectangle(rec) => self.simple_shapes.push(rec.into_simple_drawable(gfx).await?),
                 Event::EditRectangle(rec) => {
                     if let Some(x) = self.simple_shapes.iter_mut().find(|(_, id)| *id == rec.id) {
-                        *x = rec.into_simple_drawable()
+                        *x = rec.into_simple_drawable(gfx).await?
                     }
                 }
+                Event::EditImage(y) => {
+                    if let Some(x) = self.simple_shapes.iter_mut().find(|(_, id)| *id == y.id) {
+                        *x = y.into_simple_drawable(gfx).await?
+                    }
+                }
+                Event::AddImage(x) => self.simple_shapes.push(x.into_simple_drawable(gfx).await?),
             }
         }
+        Ok(())
     }
     pub fn draw(&mut self, gfx: &mut Graphics) -> quicksilver::Result<()> {
         gfx.clear(self.color);

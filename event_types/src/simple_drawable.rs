@@ -1,20 +1,34 @@
 use quicksilver::{geom::Vector, Graphics, graphics::Color};
 
 mod rectangle;
+mod image;
 pub(crate) use rectangle::Rectangle;
+pub(crate) use image::Image;
 
-///This trait is used to turn the events from the editor into something that can actually be drawn
+use async_trait::async_trait;
+
+
+
+///This trait is used to turn the events from the editor into something that can actually be drawn.
+///
 ///It is made public in case the editor get plugin support.
-///However, it doesn't have this as of yet, so you probably don't want to implement it
+///
+///However, it doesn't have this as of yet, so you probably don't want to implement it.
+///
 ///***WARNING*** CHANGES MADE TO THIS TRAIT ARE NOT SEEN AS BREAKING UNTIL PLUGIN SUPPORT EXISTS
+#[async_trait(?Send)]
+
 pub trait IntoSimpleDrawable {
     ///turns the value into something that can be drawn AND its id.
     ///the id should be unique as this is used to keep the editor and the game in sync when it comes to the added shapes
-    fn into_simple_drawable(self) -> (Box<dyn SimpleDrawable>, String);
+    async fn into_simple_drawable(self, gfx : &mut Graphics) -> quicksilver::Result<(Box<dyn SimpleDrawable>, String)>;
 }
 ///This trait is implemented by everything the editor can draw.
-///It is made public in case the editor get plugin support
-///However, it doesn't have this yet so you probably don't want to implement it
+///
+///It is made public in case the editor get plugin support.
+///
+///However, it doesn't have this yet so you probably don't want to implement it.
+///
 ///***WARNING*** CHANGES MADE TO THIS TRAIT ARE NOT SEEN AS BREAKING UNTIL PLUGIN SUPPORT EXISTS
 pub trait SimpleDrawable {
     ///draws the shape
