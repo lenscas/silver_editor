@@ -51,6 +51,7 @@ impl EventStream {
                             let output = JS_SCRIPT;
                             output
                         }))
+                        .or(warp::fs::dir("."))
                         .or(warp::path("app.js.map")
                             .and(warp::get())
                             .map(|| JS_MAP))
@@ -115,7 +116,7 @@ impl EventStream {
                                         "awesome"
                                     },
                                 ),
-                            ))).or(warp::fs::dir("static")),
+                            ))),
                 )
                 .run((config.native_config.address, config.native_config.port)),
             );
