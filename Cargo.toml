@@ -1,5 +1,6 @@
 [workspace]
 members = [
     "editor",
-    "event_types"
+    "build_in_event_types",
+    "plugin_api"
 ]

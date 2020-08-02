@@ -249,6 +249,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "build_in_event_types"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "quicksilver",
+ "schemars",
+ "serde 1.0.114",
+ "serde_json",
+]
+
+[[package]]
 name = "bumpalo"
 version = "3.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1946,6 +1957,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "plugin_api"
+version = "0.1.0"
+
+[[package]]
 name = "png"
 version = "0.15.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2517,6 +2532,7 @@ dependencies = [
 name = "silver_editor"
 version = "0.1.0"
 dependencies = [
+ "build_in_event_types",
  "bytes",
  "futures",
  "mergui",
@@ -2525,21 +2541,9 @@ dependencies = [
  "serde 1.0.114",
  "serde_json",
  "silver_animation",
- "silver_editor_event_types",
  "stdweb",
  "tokio",
  "warp",
-]
-
-[[package]]
-name = "silver_editor_event_types"
-version = "0.1.0"
-dependencies = [
- "async-trait",
- "quicksilver",
- "schemars",
- "serde 1.0.114",
- "serde_json",
 ]
 
 [[package]]

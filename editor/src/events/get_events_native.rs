@@ -1,5 +1,5 @@
 use super::shared_event_logic::{JS_SCRIPT, json_value_iter_to_event_iter};
-use silver_editor_event_types::events::{Event};
+use build_in_event_types::events::{Event};
 
 use crate::EditorConfig;
 use bytes::Buf;

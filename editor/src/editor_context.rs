@@ -7,7 +7,7 @@ use quicksilver::{
 };
 
 use crate::{events::EventStream, EditorConfig};
-use silver_editor_event_types::{
+use build_in_event_types::{
     simple_drawable::{IntoSimpleDrawable, SimpleDrawable},
     events::Event,
 };

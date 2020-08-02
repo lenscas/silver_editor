@@ -12,7 +12,7 @@ mergui = "0.1.0-alpha0.5"
 serde={version="1",features=["derive"]}
 serde_json="1"
 futures="0.3"
-silver_editor_event_types = {path="../event_types"}
+build_in_event_types = {path="../build_in_event_types"}
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 stdweb = "*"
@@ -28,5 +28,5 @@ silver_animation = "0.1.0-alpha0.3"
 
 [build-dependencies]
 schemars = "0.8.0-alpha-4"
-silver_editor_event_types = {path="../event_types"}
+build_in_event_types = {path="../build_in_event_types"}
 serde_json="1" 
