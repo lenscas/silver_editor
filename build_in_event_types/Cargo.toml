@@ -12,3 +12,4 @@ schemars = "0.8.0-alpha-4"
 serde = {version="1", features=["derive"]}
 serde_json = "1"
 async-trait = "0.1.36"
+plugin_api =  {path="../plugin_api"}

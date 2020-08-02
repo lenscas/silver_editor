@@ -1,4 +1,4 @@
-use super::SimpleDrawable;
+use plugin_api::SimpleDrawable;
 use crate::events::{params::ImageParams, SendEvents};
 use quicksilver::geom::{Rectangle, Shape};
 

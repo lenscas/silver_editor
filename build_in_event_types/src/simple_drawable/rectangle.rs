@@ -1,4 +1,5 @@
-use super::{color_to_hex, SimpleDrawable};
+use super::{color_to_hex};
+use plugin_api::SimpleDrawable;
 use crate::events::{SendEvents::EditRectangle, params::AddRectangle};
 use quicksilver::{geom::Shape, graphics::Color};
 pub(crate) struct Rectangle {

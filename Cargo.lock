@@ -253,6 +253,7 @@ name = "build_in_event_types"
 version = "0.1.0"
 dependencies = [
  "async-trait",
+ "plugin_api",
  "quicksilver",
  "schemars",
  "serde 1.0.114",
@@ -1959,6 +1960,12 @@ dependencies = [
 [[package]]
 name = "plugin_api"
 version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "quicksilver",
+ "serde 1.0.114",
+ "serde_json",
+]
 
 [[package]]
 name = "png"
@@ -2536,6 +2543,7 @@ dependencies = [
  "bytes",
  "futures",
  "mergui",
+ "plugin_api",
  "quicksilver",
  "schemars",
  "serde 1.0.114",

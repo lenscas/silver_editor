@@ -1,5 +1,7 @@
 use super::shared_event_logic::{JS_SCRIPT, json_value_iter_to_event_iter};
-use build_in_event_types::events::{Event};
+//use build_in_event_types::events::{Event};
+
+use plugin_api::Event;
 
 use crate::EditorConfig;
 use bytes::Buf;
