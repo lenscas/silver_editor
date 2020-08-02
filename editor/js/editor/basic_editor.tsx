@@ -2,6 +2,7 @@ import * as React from "react";
 import { Menu } from "./menu";
 import { Color } from "./color";
 import { Rectangle } from "./rectangle";
+import {Image} from "./image";
 import {
   Header,
   RenderName,
@@ -10,9 +11,10 @@ import {
 } from "../components/header";
 
 import { make_event_stream } from "../event_stream";
-import { SendEvents } from "../generated/incomming_events";
+import { SendEvents, AddRectangle } from "../generated/incomming_events";
+import { ImageParams } from "../generated/outgoing_events";
 
-export type EditableComponent = "color" | "AddRectangle" | "nothing";
+export type EditableComponent = "color" | "AddRectangle" | "nothing" | "Image";
 
 type BasicEditorState = {
   current_window: EditableComponent;
@@ -43,7 +45,15 @@ export class BasicEditor extends React.Component<{}, BasicEditorState> {
   dealWithIncomingEvents = (event: SendEvents) => {
     this.setState((state) => ({
       ...state,
-      current_window: event.EditRectangle ? "AddRectangle" : "nothing",
+      current_window: (()=>{
+        if(event.EditImage) {
+          return "Image"
+        } else if(event.EditRectangle){
+          return "AddRectangle"
+        } else {
+          return "nothing"
+        }
+      })(),
       edit_params: event,
     }));
   };
@@ -52,13 +62,20 @@ export class BasicEditor extends React.Component<{}, BasicEditorState> {
     switch (selected) {
       case "color":
         return <Color />;
+      case "Image":
+        if(this.state.edit_params && "EditImage" in this.state.edit_params){
+          const params  = this.state.edit_params.EditImage as any as ImageParams;
+          return <Image goToNextScreen={this.dealWithIncomingEvents} editData={params}/>
+        }
+        return <Image goToNextScreen={this.dealWithIncomingEvents} />
       case "AddRectangle":
-        if (this.state.edit_params && this.state.edit_params.EditRectangle) {
+        if (this.state.edit_params && "EditRectangle" in this.state.edit_params) {
+          const params = this.state.edit_params.EditRectangle as any as AddRectangle
           return (
             <Rectangle
-              key={this.state.edit_params.EditRectangle.id}
+              key={params.id}
               goToNextScreen={this.dealWithIncomingEvents}
-              editData={this.state.edit_params.EditRectangle}
+              editData={params}
             />
           );
         } else {

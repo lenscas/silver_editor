@@ -57,8 +57,8 @@ async fn app(window: Window, mut gfx: Graphics, mut inputs: Input) -> Result<()>
         while let Some(e) = inputs.next_event().await {
             edit_context.event(&e);
         }
-        edit_context.update();
-        edit_context.draw(&mut gfx);
+        edit_context.update(&mut gfx).await?;
+        edit_context.draw(&mut gfx)?;
         animation.draw(&mut gfx, location)?;
         gfx.present(&window)?;
     }

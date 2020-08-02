@@ -1,6 +1,6 @@
 use super::shared_event_logic::{JS_SCRIPT, json_value_iter_to_event_iter};
 use crate::{AttachButtonAt, EditorConfig};
-use silver_editor_event_types::{Event, SendEvents};
+use silver_editor_event_types::events::{Event};
 use stdweb::js;
 
 
@@ -46,7 +46,7 @@ impl EventStream {
     pub(crate) fn get_events(&mut self) -> impl Iterator<Item = Event> {
         get_events()
     }
-    pub(crate) fn send_event(&mut self, event: SendEvents) {
+    pub(crate) fn send_event(&mut self, event: serde_json::Value) {
         let as_str = serde_json::to_string(&event).expect("Could not serialize event");
         js! {
             window.silver_editor.send_event(JSON.parse(@{as_str}));

@@ -39,6 +39,7 @@ export class Menu extends React.Component<MenuProperties> {
       >
         <Choice {...this.props} current="color" />
         <Choice {...this.props} current="AddRectangle" />
+        <Choice {...this.props} current="Image" />
       </ul>
     );
   }

@@ -1,5 +1,5 @@
 use super::shared_event_logic::{JS_SCRIPT, json_value_iter_to_event_iter};
-use silver_editor_event_types::{Event, SendEvents};
+use silver_editor_event_types::events::{Event};
 
 use crate::EditorConfig;
 use bytes::Buf;
@@ -51,6 +51,7 @@ impl EventStream {
                             let output = JS_SCRIPT;
                             output
                         }))
+                        .or(warp::fs::dir("."))
                         .or(warp::path("app.js.map")
                             .and(warp::get())
                             .map(|| JS_MAP))
@@ -136,7 +137,7 @@ impl EventStream {
 
         json_value_iter_to_event_iter(res.into_iter())
     }
-    pub(crate) fn send_event(&mut self, event: SendEvents) {
+    pub(crate) fn send_event(&mut self, event: serde_json::Value) {
         println!("time to send the events");
         let mut basic_rt = runtime::Builder::new()
             .basic_scheduler()
