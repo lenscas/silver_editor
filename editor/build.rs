@@ -23,12 +23,8 @@ fn main() {
 
     for (type_to_generate, location) in types_to_generate {
         let as_bytes = serde_json::to_vec(&type_to_generate)
-                        .expect("Could not deserialize generatedjson scheme");
-        std::fs::OpenOptions::new()
-            .create(true)
-            .write(true)
-            .open(format!("./js/generated/{}.json",location))
-            .expect("could not create/open json schem file").write_all(&as_bytes).expect("Could not write to json schema file");
+            .expect("Could not deserialize generatedjson scheme");
+
         let x = Command::new("yarn")
             .args(&[
                 "create-type",
@@ -40,12 +36,17 @@ fn main() {
             .expect("Could not run commando to create ts type");
         match x.stdin {
             Some(mut x) => x
-                .write_all(
-                    &as_bytes,
-                )
+                .write_all(&as_bytes)
                 .expect("Could not write to ts type generation command"),
             None => panic!("Command to generate ts type has no stdin"),
         }
+        std::fs::OpenOptions::new()
+            .create(true)
+            .write(true)
+            .open(format!("./js/generated/{}.json", location))
+            .expect("could not create/open json schem file")
+            .write_all(&as_bytes)
+            .expect("Could not write to json schema file");
     }
     let out_dir = env::var_os("OUT_DIR").unwrap();
     Command::new("yarn")
