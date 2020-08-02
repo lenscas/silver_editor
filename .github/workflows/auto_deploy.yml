@@ -5,6 +5,7 @@ on:
     branches:
       - master
     paths:
+      - "*/build.rs"
       - "*/src/**.rs"
       - "editor/js/**.ts"
       - "editor/js/**.tsx"
