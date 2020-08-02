@@ -25,7 +25,7 @@ fn main() {
         let as_bytes = serde_json::to_vec(&type_to_generate)
             .expect("Could not deserialize generatedjson scheme");
 
-        let x = Command::new("yarn")
+        let mut x = Command::new("yarn")
             .args(&[
                 "create-type",
                 "-o",
@@ -34,12 +34,15 @@ fn main() {
             .stdin(Stdio::piped())
             .spawn()
             .expect("Could not run commando to create ts type");
-        match x.stdin {
-            Some(mut x) => x
+        match &mut x.stdin {
+            Some(y) => y
                 .write_all(&as_bytes)
                 .expect("Could not write to ts type generation command"),
             None => panic!("Command to generate ts type has no stdin"),
         }
+        
+        x.wait().unwrap_or_else(|v|panic!("error while generating ts types : {:?}",v));
+        
         std::fs::OpenOptions::new()
             .create(true)
             .write(true)
